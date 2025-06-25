@@ -3,27 +3,8 @@ import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
 
-# =========================================================================================================
-"""
-Energy Storage Technologies Visualization App
-
-Definitions:
-- Technology Type: Broad category of energy storage technologies (e.g., Electrochemical, Thermal).
-- Detailed Technology: Specific energy storage technologies within a category (e.g., Lithium-ion, Sodium-ion).
-- TRL (Technology Readiness Level): A measure of technology maturity (scale: 1–9).
-- ARL (Application Readiness Level): A measure of application maturity (scale: 1–9).
-
-Assumptions:
-- Data is provided in a cleaned `.csv` file format.
-- Numerical columns contain valid numeric data (e.g., no strings or missing values).
-
-Methodology:
-- Data is loaded from a `.csv` file.
-- Users can filter the data using sidebar controls (checkboxes, sliders, dropdowns).
-- Visualizations are generated dynamically based on filtered data.
-
-"""
-# =========================================================================================================
+# If running locally, change the 'csv_url' variable to the path of your local CSV file.
+csv_url = "https://raw.githubusercontent.com/ndmart505/LDES-Tool/main/ldes_data_example.csv"
 
 def plotdata(df): # Creates everything in Streamlit
     # Step 1: Streamlit app title
@@ -147,17 +128,44 @@ def plotdata(df): # Creates everything in Streamlit
     st.header("Filtered Data")
     st.dataframe(filtered_df)
 
-# Loads data from the CSV file then calls plotdata()
-uploaded_file = st.file_uploader("Upload your CSV file", type=["csv"])
+# Create UI
+st.markdown(
+    """
+    <div style="text-align: center;">
+        <img src="https://www.sandia.gov/app/uploads/sites/256/2023/12/LDES-Logo-White-e1703116625147-1024x180.png" width="653" height="115">
+    </div>
+    """, 
+    unsafe_allow_html=True
+)
+st.title("Energy Storage Technologies Visualization App")
+tabs = st.tabs(["Documentation", "Visualization"])
 
-if uploaded_file is not None:
-    df = pd.read_csv(uploaded_file)
-    st.success("File successfully uploaded")
-    st.write("Data loaded from CSV:")
-    st.dataframe(df)
-    plotdata(df)
-    
-else:
-    st.info("Please uploaded a .csv file to proceed")
+# Documentation Tab
+with tabs[0]:
+    st.markdown("""
+    **Definitions:**
+    - **Technology Type:** Broad category of energy storage technologies (e.g., Electrochemical, Thermal).
+    - **Detailed Technology:** Specific energy storage technologies within a category (e.g., Lithium-ion, Sodium-ion).
+    - **TRL (Technology Readiness Level):** A measure of technology maturity (scale: 1–9).
+    - **ARL (Application Readiness Level):** A measure of application maturity (scale: 1–9).
 
+    **Assumptions:**
+    - Data is provided in a cleaned `.csv` file format.
+    - Numerical columns contain valid numeric data (e.g., no strings or missing values).
 
+    **Methodology:**
+    - Data is loaded from a `.csv` file.
+    - Users can filter the data using sidebar controls (checkboxes, sliders, dropdowns).
+    - Visualizations are generated dynamically based on filtered data.
+    """)
+
+with tabs[1]:
+    # Load data from the CSV file and plot
+    try:
+        df = pd.read_csv(csv_url)
+        st.success("File successfully loaded from GitHub.")
+        st.write("Data loaded from CSV:")
+        st.dataframe(df)
+        plotdata(df)
+    except Exception as e:
+        st.error(f"Error loading the CSV file: {e}")
