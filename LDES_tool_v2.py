@@ -3,33 +3,13 @@ import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
 
-# =========================================================================================================
-"""
-Energy Storage Technologies Visualization App
+# If running locally, change the 'csv_url' variable to the path of your local CSV file.
+csv_url = "https://raw.githubusercontent.com/ndmart505/LDES-Tool/main/ldes_data_example.csv"
 
-Definitions:
-- Technology Type: Broad category of energy storage technologies (e.g., Electrochemical, Thermal).
-- Detailed Technology: Specific energy storage technologies within a category (e.g., Lithium-ion, Sodium-ion).
-- TRL (Technology Readiness Level): A measure of technology maturity (scale: 1–9).
-- ARL (Application Readiness Level): A measure of application maturity (scale: 1–9).
+# Streamlit Function
+def plotdata(df):
 
-Assumptions:
-- Data is provided in a cleaned `.csv` file format.
-- Numerical columns contain valid numeric data (e.g., no strings or missing values).
-
-Methodology:
-- Data is loaded from a `.csv` file.
-- Users can filter the data using sidebar controls (checkboxes, sliders, dropdowns).
-- Visualizations are generated dynamically based on filtered data.
-
-"""
-# =========================================================================================================
-
-def plotdata(df): # Creates everything in Streamlit
-    # Step 1: Streamlit app title
-    st.title("Energy Storage Technologies Visualization")
-
-    # Step 2: Sidebar filters
+    # Sidebar filters
     st.sidebar.header("Filters")
 
     # Filter by "Technology Type"
@@ -71,9 +51,6 @@ def plotdata(df): # Creates everything in Streamlit
     filtered_df = df.copy()
     for col, (min_val, max_val) in filters.items():
         filtered_df = filtered_df[(filtered_df[col] >= min_val) & (filtered_df[col] <= max_val)]
-
-    # Step 3: Visualization Section
-    st.header("Stacked Bar Graphs")
 
     # Function to create range bars for columns with low and high values
     def create_range_bar(df, x_col, y_low_col, y_high_col, title):
@@ -120,44 +97,77 @@ def plotdata(df): # Creates everything in Streamlit
         ]
     )
 
-    # Plot the custom graph based on user selection
-    fig_custom = px.bar(filtered_df, x="Detailed Technology", y=y_axis_value, title=f"Custom Graph: {y_axis_value}", color="Detailed Technology")
-    st.plotly_chart(fig_custom)
+    # Sets all figures to uniform size
+    def set_figure_size(fig, width=1500, height=1000):
+        fig.update_layout(width=width, height=height)
+        return fig
 
-    # Generate and display various stacked bar graphs
-    st.plotly_chart(create_range_bar(filtered_df, "Detailed Technology", "Rating – Low (MW)", "Rating – High (MW)", "Capacity Range (MW)"))
-    st.plotly_chart(create_range_bar(filtered_df, "Detailed Technology", "Duration – Low (hr)", "Duration – High (hr)", "Duration Range (hr)"))
-    st.plotly_chart(create_range_bar(filtered_df, "Detailed Technology", "RTE – Low (%)", "RTE – High (%)", "Round-Trip Efficiency (RTE) Range (%)"))
-    st.plotly_chart(create_range_bar(filtered_df, "Detailed Technology", "Degradation – Low (%/cycle)", "Degradation – High (%/cycle)", "Degradation Rate Range (%/cycle)"))
-    st.plotly_chart(create_range_bar(filtered_df, "Detailed Technology", "Ramp Rate – Low (%/hr)", "Ramp Rate – High (%/hr)", "Ramp Rate Range (%/hr)"))
-    st.plotly_chart(create_range_bar(filtered_df, "Detailed Technology", "Operating Temp – Low (°C)", "Operating Temp – High (°C)", "Operating Temperature Range (°C)"))
-    st.plotly_chart(create_range_bar(filtered_df, "Detailed Technology", "Footprint – Low (m²/MWh)", "Footprint – High (m²/MWh)", "Footprint Range (m²/MWh)"))
+    # Dictionary to hold all figures
+    figures = {
+        "Custom Graph": set_figure_size(px.bar(filtered_df, x="Detailed Technology", y=y_axis_value, title=f"Custom Graph: {y_axis_value}", color="Detailed Technology")),
+        "Capacity Range (MW)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Rating – Low (MW)", "Rating – High (MW)", "Capacity Range (MW)")),
+        "Duration Range (hr)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Duration – Low (hr)", "Duration – High (hr)", "Duration Range (hr)")),
+        "Round-Trip Efficiency (RTE) Range (%)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "RTE – Low (%)", "RTE – High (%)", "Round-Trip Efficiency (RTE) Range (%)")),
+        "Degradation Rate Range (%/cycle)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Degradation – Low (%/cycle)", "Degradation – High (%/cycle)", "Degradation Rate Range (%/cycle)")),
+        "Ramp Rate Range (%/hr)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Ramp Rate – Low (%/hr)", "Ramp Rate – High (%/hr)", "Ramp Rate Range (%/hr)")),
+        "Operating Temperature Range (°C)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Operating Temp – Low (°C)", "Operating Temp – High (°C)", "Operating Temperature Range (°C)")),
+        "Footprint Range (m²/MWh)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Footprint – Low (m²/MWh)", "Footprint – High (m²/MWh)", "Footprint Range (m²/MWh)")),
+        "Technology Readiness Level (TRL)": set_figure_size(px.bar(filtered_df, x="Detailed Technology", y="TRL", title="Technology Readiness Level (TRL)", color="Detailed Technology")),
+        "Application Readiness Level (ARL)": set_figure_size(px.bar(filtered_df, x="Detailed Technology", y="ARL", title="Application Readiness Level (ARL)", color="Detailed Technology")),
+        "Response Time from Off State (h)": set_figure_size(px.bar(filtered_df, x="Detailed Technology", y="Response Time (off) (h)", title="Response Time from Off State (h)", color="Detailed Technology")),
+        "Inertia Constant (s)": set_figure_size(px.bar(filtered_df, x="Detailed Technology", y="Inertia Constant (s)", title="Inertia Constant (s)", color="Detailed Technology")),
+        "Expected Downtime": set_figure_size(px.bar(filtered_df, x="Detailed Technology", color="Expected Downtime", title="Expected Downtime")),
+        "Geological Feature Requirement": set_figure_size(px.bar(filtered_df, x="Detailed Technology", color="Geological Req.", title="Geological Feature Requirement")),
+        "Historical Fire Events": set_figure_size(px.bar(filtered_df, x="Detailed Technology", color="Fire Incidents", title="Historical Fire Events")),
+        "Environmental Impact": set_figure_size(px.bar(filtered_df, x="Detailed Technology", color="Environmental Impact", title="Environmental Impact")),
+    }
 
-    # Additional visualizations for categorical data
-    st.plotly_chart(px.bar(filtered_df, x="Detailed Technology", y="TRL", title="Technology Readiness Level (TRL)", color="Detailed Technology"))
-    st.plotly_chart(px.bar(filtered_df, x="Detailed Technology", y="ARL", title="Application Readiness Level (ARL)", color="Detailed Technology"))
-    st.plotly_chart(px.bar(filtered_df, x="Detailed Technology", y="Response Time (off) (h)", title="Response Time from Off State (h)", color="Detailed Technology"))
-    st.plotly_chart(px.bar(filtered_df, x="Detailed Technology", y="Inertia Constant (s)", title="Inertia Constant (s)", color="Detailed Technology"))
-    st.plotly_chart(px.bar(filtered_df, x="Detailed Technology", color="Expected Downtime", title="Expected Downtime"))
-    st.plotly_chart(px.bar(filtered_df, x="Detailed Technology", color="Geological Req.", title="Geological Feature Requirement"))
-    st.plotly_chart(px.bar(filtered_df, x="Detailed Technology", color="Fire Incidents", title="Historical Fire Events"))
-    st.plotly_chart(px.bar(filtered_df, x="Detailed Technology", color="Environmental Impact", title="Environmental Impact"))
+    # Allows user to select graph
+    selected_chart = st.selectbox("Select Graph to View:", list(figures.keys()))
+    st.plotly_chart(figures[selected_chart], use_container_width=True)
 
-    # Step 4: Display the filtered data
+    # Display the filtered data
     st.header("Filtered Data")
     st.dataframe(filtered_df)
 
-# Loads data from the CSV file then calls plotdata()
-uploaded_file = st.file_uploader("Upload your CSV file", type=["csv"])
+# Create UI
+st.markdown(
+    """
+    <div style="text-align: center;">
+        <img src="https://www.sandia.gov/app/uploads/sites/256/2023/12/LDES-Logo-White-e1703116625147-1024x180.png" width="653" height="115">
+    </div>
+    """, 
+    unsafe_allow_html=True
+)
+st.title("Energy Storage Technologies Visualization App")
+tabs = st.tabs(["Documentation", "Visualization"])
 
-if uploaded_file is not None:
-    df = pd.read_csv(uploaded_file)
-    st.success("File successfully uploaded")
-    st.write("Data loaded from CSV:")
-    st.dataframe(df)
-    plotdata(df)
-    
-else:
-    st.info("Please uploaded a .csv file to proceed")
+# Documentation Tab
+with tabs[0]:
+    st.markdown("""
+    **Definitions:**
+    - **Technology Type:** Broad category of energy storage technologies (e.g., Electrochemical, Thermal).
+    - **Detailed Technology:** Specific energy storage technologies within a category (e.g., Lithium-ion, Sodium-ion).
+    - **TRL (Technology Readiness Level):** A measure of technology maturity (scale: 1–9).
+    - **ARL (Application Readiness Level):** A measure of application maturity (scale: 1–9).
 
+    **Assumptions:**
+    - Data is provided in a cleaned `.csv` file format.
+    - Numerical columns contain valid numeric data (e.g., no strings or missing values).
 
+    **Methodology:**
+    - Data is loaded from a `.csv` file.
+    - Users can filter the data using sidebar controls (checkboxes, sliders, dropdowns).
+    - Visualizations are generated dynamically based on filtered data.
+    """)
+
+with tabs[1]:
+    # Load data from the CSV file and plot
+    try:
+        df = pd.read_csv(csv_url)
+        st.success("File successfully loaded")
+        plotdata(df)
+        st.header("Data loaded from CSV")
+        st.dataframe(df)
+    except Exception as e:
+        st.error(f"Error loading the CSV file: {e}")
