@@ -20,10 +20,13 @@ This Streamlit-based web application allows users to explore, visualize, and com
      ```bash
      git clone https://github.com/ndmart505/LDES-Tool.git
   2. **Navigate to the project directory:**
+     ```bash
      cd LDES-Tool
-  3. **Install dependencies:**
+  4. **Install dependencies:**
+     ```bash
      pip install -r requirements.txt
-  4. **Run the app:**
+  6. **Run the app:**
+     ```bash
      streamlit run app.py
 
 ## Using Custom Data Sets
