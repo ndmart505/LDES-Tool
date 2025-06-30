@@ -8,7 +8,9 @@ csv_url = "https://raw.githubusercontent.com/ndmart505/LDES-Tool/main/ldes_data_
 
 # Streamlit Function
 def plotdata(df):
-
+    # Set default view to wide
+    st.set_page_config(layout="wide")
+    
     # Sidebar filters
     st.sidebar.header("Filters")
 
