@@ -17,7 +17,7 @@ This Streamlit-based web application allows users to explore, visualize, and com
 
 ## Installation
   1. **Clone the repo:**
-     '''bash
+     ```bash
      git clone https://github.com/ndmart505/LDES-Tool.git
   2. **Navigate to the project directory:**
      cd LDES-Tool
