@@ -107,7 +107,7 @@ def plotdata(df):
     # Dictionary to hold all figures
     figures = {
         "Custom Graph": set_figure_size(
-            create_range_bar(filtered_df, "Detailed Technology", "RTE - Low (%)", "RTE - High (%)",
+            create_range_bar(filtered_df, "Detailed Technology", "RTE – Low (%)", "RTE – High (%)",
                             "Round-Trip Efficiency (RTE) Range (%)")
             if y_axis_value == "RTE (%)"
             else 
