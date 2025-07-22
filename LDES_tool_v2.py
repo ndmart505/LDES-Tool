@@ -89,7 +89,7 @@ def plotdata(df):
         options=[
             "Rating – Low (MW)", "Rating – High (MW)",
             "Duration – Low (hr)", "Duration – High (hr)",
-            "RTE – Low (%)", "RTE – High (%)",
+            "RTE (%)",
             "Degradation – Low (%/cycle)", "Degradation – High (%/cycle)",
             "Ramp Rate – Low (%/hr)", "Ramp Rate – High (%/hr)",
             "Response Time (off) (h)", "Inertia Constant (s)",
@@ -106,7 +106,12 @@ def plotdata(df):
 
     # Dictionary to hold all figures
     figures = {
-        "Custom Graph": set_figure_size(px.bar(filtered_df, x="Detailed Technology", y=y_axis_value, title=f"Custom Graph: {y_axis_value}", color="Detailed Technology")),
+        "Custom Graph": set_figure_size(
+            create_range_bar(filtered_df, "Detailed Technology", "RTE - Low (%)", "RTE - High (%)",
+                            "Round-Trip Efficiency (RTE) Range (%)")
+            if y_axis_value == "RTE (%)"
+            else 
+            px.bar(filtered_df, x="Detailed Technology", y=y_axis_value, title=f"Custom Graph: {y_axis_value}", color="Detailed Technology")),
         "Capacity Range (MW)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Rating – Low (MW)", "Rating – High (MW)", "Capacity Range (MW)")),
         "Duration Range (hr)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Duration – Low (hr)", "Duration – High (hr)", "Duration Range (hr)")),
         "Round-Trip Efficiency (RTE) Range (%)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "RTE – Low (%)", "RTE – High (%)", "Round-Trip Efficiency (RTE) Range (%)")),
