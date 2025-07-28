@@ -142,7 +142,7 @@ def plotdata(df, key_prefix=""):
 st.markdown(
     """
     <div style="text-align: center;">
-        <img src="https://www.sandia.gov/app/uploads/sites/256/2023/11/LDES-Long-Dark-Background.png" width="653" height="115">
+        <img src="https://www.sandia.gov/app/uploads/sites/256/2025/07/LDES-Logo-blackBG.png" width="653" height="115">
     </div>
     """, 
     unsafe_allow_html=True
