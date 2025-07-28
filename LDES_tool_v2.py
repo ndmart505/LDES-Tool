@@ -7,8 +7,10 @@ import plotly.express as px
 csv_url = "https://raw.githubusercontent.com/ndmart505/LDES-Tool/main/ldes_data_example.csv"
 
 # Streamlit Function
-def plotdata(df):
-
+def plotdata(df, key_prefix=""):
+    # Set default view to wide
+    st.set_page_config(layout="wide")
+    
     # Sidebar filters
     st.sidebar.header("Filters")
 
@@ -18,13 +20,13 @@ def plotdata(df):
         selected_technology_types = []
         for tech_type in technology_types:
             # Create a checkbox for each technology type
-            if st.sidebar.checkbox(tech_type, value=True, key=f"tech_type_{tech_type}"):
+            if st.sidebar.checkbox(tech_type, value=True, key=f"{key_prefix}tech_type_{tech_type}"):
                 selected_technology_types.append(tech_type)
         # Filter the DataFrame based on selected technology types
         df = df[df["Technology Type"].isin(selected_technology_types)]
 
     # Allow users to select columns to filter by
-    filter_columns = st.sidebar.multiselect("Select columns to filter by", options=df.columns)
+    filter_columns = st.sidebar.multiselect("Select columns to filter by", options=df.columns, key=f"{key_prefix}filter_columns")
 
     # Filter by "Detailed Technology"
     if "Detailed Technology" in filter_columns:
@@ -32,7 +34,7 @@ def plotdata(df):
         selected_detailed_technologies = []
         for detailed_tech in detailed_technologies:
             # Create a checkbox for each detailed technology
-            if st.sidebar.checkbox(detailed_tech, value=True, key=f"detailed_tech_{detailed_tech}"):
+            if st.sidebar.checkbox(detailed_tech, value=True, key=f"{key_prefix}detailed_tech_{detailed_tech}"):
                 selected_detailed_technologies.append(detailed_tech)
         # Filter the DataFrame based on selected detailed technologies
         df = df[df["Detailed Technology"].isin(selected_detailed_technologies)]
@@ -45,7 +47,7 @@ def plotdata(df):
             min_val = df[col].min()
             max_val = df[col].max()
             # Create a slider for filtering the column
-            filters[col] = st.sidebar.slider(f"Filter by {col}", min_value=min_val, max_value=max_val, value=(min_val, max_val))
+            filters[col] = st.sidebar.slider(f"Filter by {col}", min_value=min_val, max_value=max_val, value=(min_val, max_val), key=f"{key_prefix}slider_{col}")
 
     # Apply numerical filters to the DataFrame
     filtered_df = df.copy()
@@ -87,14 +89,15 @@ def plotdata(df):
         options=[
             "Rating – Low (MW)", "Rating – High (MW)",
             "Duration – Low (hr)", "Duration – High (hr)",
-            "RTE – Low (%)", "RTE – High (%)",
+            "RTE (%)",
             "Degradation – Low (%/cycle)", "Degradation – High (%/cycle)",
             "Ramp Rate – Low (%/hr)", "Ramp Rate – High (%/hr)",
             "Response Time (off) (h)", "Inertia Constant (s)",
             "Operating Temp – Low (°C)", "Operating Temp – High (°C)",
             "Footprint – Low (m²/MWh)", "Footprint – High (m²/MWh)",
             "TRL", "ARL"
-        ]
+        ],
+        key=f"{key_prefix}y_axis_value"
     )
 
     # Sets all figures to uniform size
@@ -104,7 +107,12 @@ def plotdata(df):
 
     # Dictionary to hold all figures
     figures = {
-        "Custom Graph": set_figure_size(px.bar(filtered_df, x="Detailed Technology", y=y_axis_value, title=f"Custom Graph: {y_axis_value}", color="Detailed Technology")),
+        "Custom Graph": set_figure_size(
+            create_range_bar(filtered_df, "Detailed Technology", "RTE – Low (%)", "RTE – High (%)",
+                            "Round-Trip Efficiency (RTE) Range (%)")
+            if y_axis_value == "RTE (%)"
+            else 
+            px.bar(filtered_df, x="Detailed Technology", y=y_axis_value, title=f"Custom Graph: {y_axis_value}", color="Detailed Technology")),
         "Capacity Range (MW)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Rating – Low (MW)", "Rating – High (MW)", "Capacity Range (MW)")),
         "Duration Range (hr)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Duration – Low (hr)", "Duration – High (hr)", "Duration Range (hr)")),
         "Round-Trip Efficiency (RTE) Range (%)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "RTE – Low (%)", "RTE – High (%)", "Round-Trip Efficiency (RTE) Range (%)")),
@@ -123,8 +131,8 @@ def plotdata(df):
     }
 
     # Allows user to select graph
-    selected_chart = st.selectbox("Select Graph to View:", list(figures.keys()))
-    st.plotly_chart(figures[selected_chart], use_container_width=True)
+    selected_chart = st.selectbox("Select Graph to View:", list(figures.keys()), key=f"{key_prefix}graph_selector")
+    st.plotly_chart(figures[selected_chart], use_container_width=True,key=f"{key_prefix}plotly_chart")
 
     # Display the filtered data
     st.header("Filtered Data")
@@ -134,16 +142,21 @@ def plotdata(df):
 st.markdown(
     """
     <div style="text-align: center;">
-        <img src="https://www.sandia.gov/app/uploads/sites/256/2023/12/LDES-Logo-White-e1703116625147-1024x180.png" width="653" height="115">
+        <img src="https://www.sandia.gov/app/uploads/sites/256/2023/11/LDES-Long-Dark-Background.png" width="653" height="115">
     </div>
     """, 
     unsafe_allow_html=True
 )
 st.title("Energy Storage Technologies Visualization App")
-tabs = st.tabs(["Documentation", "Visualization"])
+selected_tab = st.radio(
+    label="",
+    options=["Documentation", "Visualization","Custom Data Set"],
+    horizontal=True
+)
 
 # Documentation Tab
-with tabs[0]:
+if selected_tab == "Documentation":
+    st.header("Documentation")
     st.markdown("""
     **Definitions:**
     - **Technology Type:** Broad category of energy storage technologies (e.g., Electrochemical, Thermal).
@@ -161,13 +174,29 @@ with tabs[0]:
     - Visualizations are generated dynamically based on filtered data.
     """)
 
-with tabs[1]:
+# Visualization Tab
+elif selected_tab == "Visualization":
     # Load data from the CSV file and plot
     try:
         df = pd.read_csv(csv_url)
         st.success("File successfully loaded")
-        plotdata(df)
+        plotdata(df, key_prefix="viz_")
         st.header("Data loaded from CSV")
         st.dataframe(df)
     except Exception as e:
         st.error(f"Error loading the CSV file: {e}")
+
+# Custom Data Set Tab
+elif selected_tab == "Custom Data Set":
+    st.header("Upload and Visualize Custom Data Set")
+    uploaded_file = st.file_uploader("Upload a Custom Data Set as a CSV file", type="csv")
+
+    if uploaded_file is not None:
+        try:
+            custom_df = pd.read_csv(uploaded_file)
+            st.success("Custom CSV file loaded")
+            plotdata(custom_df, key_prefix="custom_")
+        except Exception as e:
+            st.error(f"Error processing uploaded file: {e}")
+    else: 
+        st.info("Please upload a CSV file to get started.")
