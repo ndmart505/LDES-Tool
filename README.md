@@ -1,0 +1,32 @@
+# LDES Tool
+![LDES Tool Logo](LDES-Logo-White.png)
+
+## Overview
+This Streamlit-based web application allows users to explore, visualize, and compare performance metrics of various long-duration energy storage (LDES) technologies. It helps researchers, policymakers, and engineers make informed decisions based on efficiency, degradation, and capacity parameters.
+
+[Launch the app on Streamlit](https://ldes-tool.streamlit.app/)
+
+## Features
+- Interactive range bar plots for:
+  - Round-trip efficiency (RTE)
+  - Power rating
+  - Duration and degradation
+- Filtering options for storage types
+- Upload and analyze custom datasets (instructions below)
+- Insights on technology trade-offs and suitability
+
+## Installation
+  1. **Clone the repo:**
+     ```bash
+     git clone https://github.com/ndmart505/LDES-Tool.git
+  2. **Navigate to the project directory:**
+     ```bash
+     cd LDES-Tool
+  4. **Install dependencies:**
+     ```bash
+     pip install -r requirements.txt
+  6. **Run the app:**
+     ```bash
+     streamlit run app.py
+
+## Using Custom Data Sets
