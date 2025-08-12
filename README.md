@@ -28,5 +28,3 @@ This Streamlit-based web application allows users to explore, visualize, and com
   6. **Run the app:**
      ```bash
      streamlit run app.py
-
-## Using Custom Data Sets
