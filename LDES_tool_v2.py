@@ -4,13 +4,10 @@ import plotly.graph_objects as go
 import plotly.express as px
 
 # If running locally, change the 'csv_url' variable to the path of your local CSV file.
-csv_url = "https://raw.githubusercontent.com/ndmart505/LDES-Tool/main/ldes_data_example.csv"
+csv_url = "https://raw.githubusercontent.com/ndmart505/LDES-Tool/main/ldes_real_data_v0.csv"
 
 # Streamlit Function
-def plotdata(df, key_prefix=""):
-    # Set default view to wide
-    st.set_page_config(layout="wide")
-    
+def plotdata(df):
     # Sidebar filters
     st.sidebar.header("Filters")
 
@@ -20,13 +17,13 @@ def plotdata(df, key_prefix=""):
         selected_technology_types = []
         for tech_type in technology_types:
             # Create a checkbox for each technology type
-            if st.sidebar.checkbox(tech_type, value=True, key=f"{key_prefix}tech_type_{tech_type}"):
+            if st.sidebar.checkbox(tech_type, value=True):
                 selected_technology_types.append(tech_type)
         # Filter the DataFrame based on selected technology types
         df = df[df["Technology Type"].isin(selected_technology_types)]
 
     # Allow users to select columns to filter by
-    filter_columns = st.sidebar.multiselect("Select columns to filter by", options=df.columns, key=f"{key_prefix}filter_columns")
+    filter_columns = st.sidebar.multiselect("Select columns to filter by", options=df.columns)
 
     # Filter by "Detailed Technology"
     if "Detailed Technology" in filter_columns:
@@ -34,7 +31,7 @@ def plotdata(df, key_prefix=""):
         selected_detailed_technologies = []
         for detailed_tech in detailed_technologies:
             # Create a checkbox for each detailed technology
-            if st.sidebar.checkbox(detailed_tech, value=True, key=f"{key_prefix}detailed_tech_{detailed_tech}"):
+            if st.sidebar.checkbox(detailed_tech, value=True):
                 selected_detailed_technologies.append(detailed_tech)
         # Filter the DataFrame based on selected detailed technologies
         df = df[df["Detailed Technology"].isin(selected_detailed_technologies)]
@@ -47,7 +44,7 @@ def plotdata(df, key_prefix=""):
             min_val = df[col].min()
             max_val = df[col].max()
             # Create a slider for filtering the column
-            filters[col] = st.sidebar.slider(f"Filter by {col}", min_value=min_val, max_value=max_val, value=(min_val, max_val), key=f"{key_prefix}slider_{col}")
+            filters[col] = st.sidebar.slider(f"Filter by {col}", min_value=min_val, max_value=max_val, value=(min_val, max_val))
 
     # Apply numerical filters to the DataFrame
     filtered_df = df.copy()
@@ -87,75 +84,109 @@ def plotdata(df, key_prefix=""):
     y_axis_value = st.sidebar.selectbox(
         "Select the y-axis value for the custom graph",
         options=[
-            "Rating – Low (MW)", "Rating – High (MW)",
-            "Duration – Low (hr)", "Duration – High (hr)",
+            "Duration (hr)",
             "RTE (%)",
-            "Degradation – Low (%/cycle)", "Degradation – High (%/cycle)",
-            "Ramp Rate – Low (%/hr)", "Ramp Rate – High (%/hr)",
-            "Response Time (off) (h)", "Inertia Constant (s)",
-            "Operating Temp – Low (°C)", "Operating Temp – High (°C)",
-            "Footprint – Low (m²/MWh)", "Footprint – High (m²/MWh)",
-            "TRL", "ARL"
-        ],
-        key=f"{key_prefix}y_axis_value"
+            "Degradation (%/cycle)",
+            "Cycle Life (#)",
+            "Ramp Rate (% rated power/min)",
+            "Response Time (s)",
+            "Energy Density (acre/MWhe)",
+            "Power Density (acre/MW)",
+            "CAPEX Energy Basis ($/kWhe)",
+            "CAPEX Power Basis ($/kWe)",
+            "OPEX ($/kW-year)",
+            "TRL", "ARL", "MRL"
+        ]
     )
 
-    # Sets all figures to uniform size
-    def set_figure_size(fig, width=1500, height=1000):
-        fig.update_layout(width=width, height=height)
+    # Sets all figures to responsive size
+    def set_figure_size(fig, height=600):
+        fig.update_layout(
+            height=height,
+            margin=dict(l=50, r=50, t=80, b=50),
+            font=dict(size=12)
+        )
         return fig
+
+    # Function to create custom graph based on selection
+    def create_custom_graph(df, metric_type):
+        # Define the mapping of metric types to their low/high column names
+        range_metrics = {
+            "Duration (hr)": ("Duration - Low (hr)", "Duration - High (hr)"),
+            "RTE (%)": ("RTE - Low (%)", "RTE - High (%)"),
+            "Degradation (%/cycle)": ("Degradation - Low (%/cycle)", "Degradation - High (%/cycle)"),
+            "Cycle Life (#)": ("Cycle Life - Low (#)", "Cycle Life - High (#)"),
+            "Ramp Rate (% rated power/min)": ("Ramp Rate - Low (% rated power/min)", "Ramp Rate - High (% rated power/min)"),
+            "Response Time (s)": ("Response Time - Low (s)", "Response Time - High (s)"),
+            "Energy Density (acre/MWhe)": ("Energy Density - Low (acre/MWhe)", "Energy Density - High (acre/MWhe)"),
+            "Power Density (acre/MW)": ("Power Density - Low (acre/MW)", "Power Density - High (acre/MW)"),
+            "CAPEX Energy Basis ($/kWhe)": ("CAPEX Energy Basis - Low ($/kWhe)", "CAPEX Energy Basis - High ($/kWhe)"),
+            "CAPEX Power Basis ($/kWe)": ("CAPEX Power Basis - Low ($/kWe)", "CAPEX Power Basis - High ($/kWe)"),
+            "OPEX ($/kW-year)": ("OPEX - Low ($/kW-year)", "OPEX - High ($/kW-year)")
+        }
+        
+        # Check if the selected metric has a range (low/high values)
+        if metric_type in range_metrics:
+            low_col, high_col = range_metrics[metric_type]
+            return create_range_bar(df, "Detailed Technology", low_col, high_col, f"{metric_type} Range")
+        else:
+            # For single-value metrics (TRL, ARL, MRL)
+            return px.bar(df, x="Detailed Technology", y=metric_type, 
+                         title=f"Custom Graph: {metric_type}", 
+                         color="Detailed Technology")
 
     # Dictionary to hold all figures
     figures = {
-        "Custom Graph": set_figure_size(
-            create_range_bar(filtered_df, "Detailed Technology", "RTE – Low (%)", "RTE – High (%)",
-                            "Round-Trip Efficiency (RTE) Range (%)")
-            if y_axis_value == "RTE (%)"
-            else 
-            px.bar(filtered_df, x="Detailed Technology", y=y_axis_value, title=f"Custom Graph: {y_axis_value}", color="Detailed Technology")),
-        "Capacity Range (MW)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Rating – Low (MW)", "Rating – High (MW)", "Capacity Range (MW)")),
-        "Duration Range (hr)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Duration – Low (hr)", "Duration – High (hr)", "Duration Range (hr)")),
-        "Round-Trip Efficiency (RTE) Range (%)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "RTE – Low (%)", "RTE – High (%)", "Round-Trip Efficiency (RTE) Range (%)")),
-        "Degradation Rate Range (%/cycle)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Degradation – Low (%/cycle)", "Degradation – High (%/cycle)", "Degradation Rate Range (%/cycle)")),
-        "Ramp Rate Range (%/hr)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Ramp Rate – Low (%/hr)", "Ramp Rate – High (%/hr)", "Ramp Rate Range (%/hr)")),
-        "Operating Temperature Range (°C)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Operating Temp – Low (°C)", "Operating Temp – High (°C)", "Operating Temperature Range (°C)")),
-        "Footprint Range (m²/MWh)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Footprint – Low (m²/MWh)", "Footprint – High (m²/MWh)", "Footprint Range (m²/MWh)")),
+        "Custom Graph": set_figure_size(create_custom_graph(filtered_df, y_axis_value)),
+        "Duration Range (hr)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Duration - Low (hr)", "Duration - High (hr)", "Duration Range (hr)")),
+        "Round-Trip Efficiency (RTE) Range (%)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "RTE - Low (%)", "RTE - High (%)", "Round-Trip Efficiency (RTE) Range (%)")),
+        "Degradation Rate Range (%/cycle)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Degradation - Low (%/cycle)", "Degradation - High (%/cycle)", "Degradation Rate Range (%/cycle)")),
+        "Cycle Life Range (#)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Cycle Life - Low (#)", "Cycle Life - High (#)", "Cycle Life Range (#)")),
+        "Ramp Rate Range (% rated power/min)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Ramp Rate - Low (% rated power/min)", "Ramp Rate - High (% rated power/min)", "Ramp Rate Range (% rated power/min)")),
+        "Response Time Range (s)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Response Time - Low (s)", "Response Time - High (s)", "Response Time Range (s)")),
+        "Energy Density Range (acre/MWhe)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Energy Density - Low (acre/MWhe)", "Energy Density - High (acre/MWhe)", "Energy Density Range (acre/MWhe)")),
+        "Power Density Range (acre/MW)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Power Density - Low (acre/MW)", "Power Density - High (acre/MW)", "Power Density Range (acre/MW)")),
+        "CAPEX Energy Basis Range ($/kWhe)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "CAPEX Energy Basis - Low ($/kWhe)", "CAPEX Energy Basis - High ($/kWhe)", "CAPEX Energy Basis Range ($/kWhe)")),
+        "CAPEX Power Basis Range ($/kWe)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "CAPEX Power Basis - Low ($/kWe)", "CAPEX Power Basis - High ($/kWe)", "CAPEX Power Basis Range ($/kWe)")),
+        "OPEX Range ($/kW-year)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "OPEX - Low ($/kW-year)", "OPEX - High ($/kW-year)", "OPEX Range ($/kW-year)")),
         "Technology Readiness Level (TRL)": set_figure_size(px.bar(filtered_df, x="Detailed Technology", y="TRL", title="Technology Readiness Level (TRL)", color="Detailed Technology")),
         "Application Readiness Level (ARL)": set_figure_size(px.bar(filtered_df, x="Detailed Technology", y="ARL", title="Application Readiness Level (ARL)", color="Detailed Technology")),
-        "Response Time from Off State (h)": set_figure_size(px.bar(filtered_df, x="Detailed Technology", y="Response Time (off) (h)", title="Response Time from Off State (h)", color="Detailed Technology")),
-        "Inertia Constant (s)": set_figure_size(px.bar(filtered_df, x="Detailed Technology", y="Inertia Constant (s)", title="Inertia Constant (s)", color="Detailed Technology")),
+        "Manufacturing Readiness Level (MRL)": set_figure_size(px.bar(filtered_df, x="Detailed Technology", y="MRL", title="Manufacturing Readiness Level (MRL)", color="Detailed Technology")),
         "Expected Downtime": set_figure_size(px.bar(filtered_df, x="Detailed Technology", color="Expected Downtime", title="Expected Downtime")),
         "Geological Feature Requirement": set_figure_size(px.bar(filtered_df, x="Detailed Technology", color="Geological Req.", title="Geological Feature Requirement")),
         "Historical Fire Events": set_figure_size(px.bar(filtered_df, x="Detailed Technology", color="Fire Incidents", title="Historical Fire Events")),
         "Environmental Impact": set_figure_size(px.bar(filtered_df, x="Detailed Technology", color="Environmental Impact", title="Environmental Impact")),
+        "Separate Power & Energy": set_figure_size(px.bar(filtered_df, x="Detailed Technology", color="Separate Power & Energy ", title="Separate Power & Energy")),
+        "Off-Gassing": set_figure_size(px.bar(filtered_df, x="Detailed Technology", color="Off-Gassing ", title="Off-Gassing")),
     }
 
     # Allows user to select graph
-    selected_chart = st.selectbox("Select Graph to View:", list(figures.keys()), key=f"{key_prefix}graph_selector")
-    st.plotly_chart(figures[selected_chart], use_container_width=True,key=f"{key_prefix}plotly_chart")
+    selected_chart = st.selectbox("Select Graph to View:", list(figures.keys()))
+    st.plotly_chart(figures[selected_chart], use_container_width=True)
 
     # Display the filtered data
     st.header("Filtered Data")
     st.dataframe(filtered_df)
 
+# Set default view to wide
+st.set_page_config(layout="wide")
+
 # Create UI
 st.markdown(
     """
     <div style="text-align: center;">
-        <img src="https://www.sandia.gov/app/uploads/sites/256/2023/11/LDES-Long-Dark-Background.png" width="653" height="115">
+        <img src="https://www.sandia.gov/app/uploads/sites/256/2025/07/LDES-Logo-blackBG.png" width="653" height="115">
     </div>
     """, 
     unsafe_allow_html=True
 )
 st.title("Energy Storage Technologies Visualization App")
-selected_tab = st.radio(
-    label="",
-    options=["Documentation", "Visualization","Custom Data Set"],
-    horizontal=True
-)
+
+# Create tabs
+tab1, tab2 = st.tabs(["Documentation", "Visualization"])
 
 # Documentation Tab
-if selected_tab == "Documentation":
+with tab1:
     st.header("Documentation")
     st.markdown("""
     **Definitions:**
@@ -175,28 +206,13 @@ if selected_tab == "Documentation":
     """)
 
 # Visualization Tab
-elif selected_tab == "Visualization":
+with tab2:
     # Load data from the CSV file and plot
     try:
         df = pd.read_csv(csv_url)
         st.success("File successfully loaded")
-        plotdata(df, key_prefix="viz_")
+        plotdata(df)
         st.header("Data loaded from CSV")
         st.dataframe(df)
     except Exception as e:
         st.error(f"Error loading the CSV file: {e}")
-
-# Custom Data Set Tab
-elif selected_tab == "Custom Data Set":
-    st.header("Upload and Visualize Custom Data Set")
-    uploaded_file = st.file_uploader("Upload a Custom Data Set as a CSV file", type="csv")
-
-    if uploaded_file is not None:
-        try:
-            custom_df = pd.read_csv(uploaded_file)
-            st.success("Custom CSV file loaded")
-            plotdata(custom_df, key_prefix="custom_")
-        except Exception as e:
-            st.error(f"Error processing uploaded file: {e}")
-    else: 
-        st.info("Please upload a CSV file to get started.")
