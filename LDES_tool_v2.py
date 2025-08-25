@@ -100,11 +100,11 @@ def plotdata(df):
     )
 
     # Sets all figures to responsive size
-    def set_figure_size(fig, height=600):
+    def set_figure_size(fig):
         fig.update_layout(
-            height=height,
             margin=dict(l=50, r=50, t=80, b=50),
-            font=dict(size=12)
+            font=dict(size=12),
+            autosize=True
         )
         return fig
 
@@ -162,7 +162,7 @@ def plotdata(df):
 
     # Allows user to select graph
     selected_chart = st.selectbox("Select Graph to View:", list(figures.keys()))
-    st.plotly_chart(figures[selected_chart], use_container_width=True)
+    st.plotly_chart(figures[selected_chart], use_container_width=True, use_container_height=True)
 
     # Display the filtered data
     st.header("Filtered Data")
