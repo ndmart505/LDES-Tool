@@ -6,6 +6,8 @@ import plotly.express as px
 # If running locally, change the 'csv_url' variable to the path of your local CSV file.
 csv_url = "https://raw.githubusercontent.com/ndmart505/LDES-Tool/main/ldes_real_data_v0.csv"
 
+projects_url = "https://raw.githubusercontent.com/ndmart505/LDES-Tool/main/LDES%20projecct%20tracking%20list%20v1.2_clean.xlsx"
+
 # Streamlit Function
 def plotdata(df):
     # Sidebar filters
@@ -22,8 +24,40 @@ def plotdata(df):
         # Filter the DataFrame based on selected technology types
         df = df[df["Technology Type"].isin(selected_technology_types)]
 
+    # Define the mapping of combined metrics to their low/high column names
+    range_metrics = {
+        "Duration (hr)": ("Duration - Low (hr)", "Duration - High (hr)"),
+        "RTE (%)": ("RTE - Low (%)", "RTE - High (%)"),
+        "Degradation (%/cycle)": ("Degradation - Low (%/cycle)", "Degradation - High (%/cycle)"),
+        "Cycle Life (#)": ("Cycle Life - Low (#)", "Cycle Life - High (#)"),
+        "Ramp Rate (% rated power/min)": ("Ramp Rate - Low (% rated power/min)", "Ramp Rate - High (% rated power/min)"),
+        "Response Time (s)": ("Response Time - Low (s)", "Response Time - High (s)"),
+        "Energy Density (acre/MWhe)": ("Energy Density - Low (acre/MWhe)", "Energy Density - High (acre/MWhe)"),
+        "Power Density (acre/MW)": ("Power Density - Low (acre/MW)", "Power Density - High (acre/MW)"),
+        "CAPEX Energy Basis ($/kWhe)": ("CAPEX Energy Basis - Low ($/kWhe)", "CAPEX Energy Basis - High ($/kWhe)"),
+        "CAPEX Power Basis ($/kWe)": ("CAPEX Power Basis - Low ($/kWe)", "CAPEX Power Basis - High ($/kWe)"),
+        "OPEX ($/kW-year)": ("OPEX - Low ($/kW-year)", "OPEX - High ($/kW-year)")
+    }
+
+    # Create list of available filter options
+    available_filters = []
+    
+    # Add range metrics that exist in the dataframe
+    for metric_name, (low_col, high_col) in range_metrics.items():
+        if low_col in df.columns and high_col in df.columns:
+            available_filters.append(metric_name)
+    
+    # Add single-value columns
+    single_value_columns = ["TRL", "ARL", "MRL", "Detailed Technology"]
+    for col in single_value_columns:
+        if col in df.columns:
+            available_filters.append(col)
+    
     # Allow users to select columns to filter by
-    filter_columns = st.sidebar.multiselect("Select columns to filter by", options=df.columns)
+    filter_columns = st.sidebar.multiselect("Select columns to filter by", options=available_filters)
+
+    # Store active filter ranges for clipping
+    active_filter_ranges = {}
 
     # Filter by "Detailed Technology"
     if "Detailed Technology" in filter_columns:
@@ -36,25 +70,66 @@ def plotdata(df):
         # Filter the DataFrame based on selected detailed technologies
         df = df[df["Detailed Technology"].isin(selected_detailed_technologies)]
 
-    # Create sliders for numerical columns selected for filtering
-    filters = {}
-    for col in filter_columns:
-        if col not in ["Technology Type", "Detailed Technology"] and df[col].dtype in [int, float]:
-            # Get the minimum and maximum values for the column
-            min_val = df[col].min()
-            max_val = df[col].max()
-            # Create a slider for filtering the column
-            filters[col] = st.sidebar.slider(f"Filter by {col}", min_value=min_val, max_value=max_val, value=(min_val, max_val))
-
-    # Apply numerical filters to the DataFrame
+    # Create sliders for selected filter columns
     filtered_df = df.copy()
-    for col, (min_val, max_val) in filters.items():
-        filtered_df = filtered_df[(filtered_df[col] >= min_val) & (filtered_df[col] <= max_val)]
+    
+    for filter_col in filter_columns:
+        if filter_col == "Detailed Technology":
+            continue  # Already handled above
+            
+        elif filter_col in range_metrics:
+            # Handle range metrics (low/high columns)
+            low_col, high_col = range_metrics[filter_col]
+            
+            # Get all low and high values to determine overall range
+            all_low_values = df[low_col].dropna()
+            all_high_values = df[high_col].dropna()
+            
+            if len(all_low_values) > 0 and len(all_high_values) > 0:
+                overall_min = min(all_low_values.min(), all_high_values.min())
+                overall_max = max(all_low_values.max(), all_high_values.max())
+                
+                # Create a slider for the range
+                selected_range = st.sidebar.slider(
+                    f"Filter by {filter_col}", 
+                    min_value=float(overall_min), 
+                    max_value=float(overall_max), 
+                    value=(float(overall_min), float(overall_max)),
+                    key=f"slider_{filter_col}"
+                )
+                
+                # Store the active filter range for clipping
+                active_filter_ranges[filter_col] = selected_range
+                
+                # Filter the DataFrame: keep rows where the range overlaps with selected range
+                # A row is kept if: (low_value <= selected_max) AND (high_value >= selected_min)
+                mask = (
+                    (filtered_df[low_col] <= selected_range[1]) & 
+                    (filtered_df[high_col] >= selected_range[0])
+                )
+                filtered_df = filtered_df[mask]
+                
+        elif filter_col in ["TRL", "ARL", "MRL"] and filter_col in df.columns:
+            # Handle single-value numerical columns
+            if df[filter_col].dtype in [int, float]:
+                min_val = df[filter_col].min()
+                max_val = df[filter_col].max()
+                selected_range = st.sidebar.slider(
+                    f"Filter by {filter_col}", 
+                    min_value=float(min_val), 
+                    max_value=float(max_val), 
+                    value=(float(min_val), float(max_val)),
+                    key=f"slider_{filter_col}"
+                )
+                filtered_df = filtered_df[
+                    (filtered_df[filter_col] >= selected_range[0]) & 
+                    (filtered_df[filter_col] <= selected_range[1])
+                ]
 
-    # Function to create range bars for columns with low and high values
+    # Function to create range bars with clipping
     def create_range_bar(df, x_col, y_low_col, y_high_col, title):
         """
-        Creates a stacked bar graph to visualize ranges (low and high values).
+        Creates a stacked bar graph to visualize ranges (low and high values) with clipping.
 
         Parameters:
         - df: DataFrame containing the data.
@@ -67,13 +142,50 @@ def plotdata(df):
         - fig: Plotly Figure object.
         """
         fig = go.Figure()
+        
+        # Determine if we need to apply clipping based on active filters
+        clip_range = None
+        metric_name = None
+        
+        # Find which metric this corresponds to for clipping
+        for metric, (low_col, high_col) in range_metrics.items():
+            if low_col == y_low_col and high_col == y_high_col:
+                metric_name = metric
+                if metric in active_filter_ranges:
+                    clip_range = active_filter_ranges[metric]
+                break
+        
         for i, row in df.iterrows():
-            fig.add_trace(go.Bar(
-                x=[row[x_col]],
-                y=[row[y_high_col] - row[y_low_col]],  # Height of the bar
-                base=[row[y_low_col]],  # Starting point of the bar
-                name=row[x_col]
-            ))
+            low_val = row[y_low_col]
+            high_val = row[y_high_col]
+            
+            # Apply clipping if there's an active filter for this metric
+            if clip_range:
+                # Clip the low and high values to the filter range
+                clipped_low = max(low_val, clip_range[0])
+                clipped_high = min(high_val, clip_range[1])
+                
+                # Only show the bar if there's still a valid range after clipping
+                if clipped_low <= clipped_high:
+                    fig.add_trace(go.Bar(
+                        x=[row[x_col]],
+                        y=[clipped_high - clipped_low],  # Height of the clipped bar
+                        base=[clipped_low],  # Starting point of the clipped bar
+                        name=row[x_col],
+                        hovertemplate=f"<b>{row[x_col]}</b><br>" +
+                                    f"Original Range: {low_val:.2f} - {high_val:.2f}<br>" +
+                                    f"Clipped Range: {clipped_low:.2f} - {clipped_high:.2f}<br>" +
+                                    "<extra></extra>"
+                    ))
+            else:
+                # No clipping - show original range
+                fig.add_trace(go.Bar(
+                    x=[row[x_col]],
+                    y=[high_val - low_val],  # Height of the bar
+                    base=[low_val],  # Starting point of the bar
+                    name=row[x_col]
+                ))
+        
         fig.update_layout(title=title, barmode='group')
         return fig
 
@@ -109,22 +221,7 @@ def plotdata(df):
         return fig
 
     # Function to create custom graph based on selection
-    def create_custom_graph(df, metric_type):
-        # Define the mapping of metric types to their low/high column names
-        range_metrics = {
-            "Duration (hr)": ("Duration - Low (hr)", "Duration - High (hr)"),
-            "RTE (%)": ("RTE - Low (%)", "RTE - High (%)"),
-            "Degradation (%/cycle)": ("Degradation - Low (%/cycle)", "Degradation - High (%/cycle)"),
-            "Cycle Life (#)": ("Cycle Life - Low (#)", "Cycle Life - High (#)"),
-            "Ramp Rate (% rated power/min)": ("Ramp Rate - Low (% rated power/min)", "Ramp Rate - High (% rated power/min)"),
-            "Response Time (s)": ("Response Time - Low (s)", "Response Time - High (s)"),
-            "Energy Density (acre/MWhe)": ("Energy Density - Low (acre/MWhe)", "Energy Density - High (acre/MWhe)"),
-            "Power Density (acre/MW)": ("Power Density - Low (acre/MW)", "Power Density - High (acre/MW)"),
-            "CAPEX Energy Basis ($/kWhe)": ("CAPEX Energy Basis - Low ($/kWhe)", "CAPEX Energy Basis - High ($/kWhe)"),
-            "CAPEX Power Basis ($/kWe)": ("CAPEX Power Basis - Low ($/kWe)", "CAPEX Power Basis - High ($/kWe)"),
-            "OPEX ($/kW-year)": ("OPEX - Low ($/kW-year)", "OPEX - High ($/kW-year)")
-        }
-        
+    def create_custom_graph(df, metric_type):        
         # Check if the selected metric has a range (low/high values)
         if metric_type in range_metrics:
             low_col, high_col = range_metrics[metric_type]
@@ -162,11 +259,35 @@ def plotdata(df):
 
     # Allows user to select graph
     selected_chart = st.selectbox("Select Graph to View:", list(figures.keys()))
-    st.plotly_chart(figures[selected_chart], use_container_width=True, use_container_height=True)
+    st.plotly_chart(figures[selected_chart], use_container_width=True, config={'displayModeBar': True, 'responsive': True})
 
     # Display the filtered data
     st.header("Filtered Data")
-    st.dataframe(filtered_df)
+
+    column_config = {}
+
+    if "Technology Type" in filtered_df.columns:
+        column_config["Technology Type"] = st.column_config.TextColumn(
+            "Technology Type",
+            width=115,
+            pinned="left" 
+        )
+        
+    if "Detailed Technology" in filtered_df.columns:
+        column_config["Detailed Technology"] = st.column_config.TextColumn(
+            "Detailed Technology", 
+            width=260,
+            pinned="left"
+        )
+        
+    st.data_editor(
+        filtered_df,
+        column_config=column_config,
+        use_container_width=True,
+        height=400,
+        disabled=True,
+        hide_index=True
+    )    
 
 # Set default view to wide
 st.set_page_config(layout="wide")
@@ -212,7 +333,5 @@ with tab2:
         df = pd.read_csv(csv_url)
         st.success("File successfully loaded")
         plotdata(df)
-        st.header("Data loaded from CSV")
-        st.dataframe(df)
     except Exception as e:
         st.error(f"Error loading the CSV file: {e}")
