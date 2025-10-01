@@ -6,7 +6,7 @@ import plotly.express as px
 # If running locally, change the 'csv_url' variable to the path of your local CSV file.
 csv_url = "https://raw.githubusercontent.com/ndmart505/LDES-Tool/main/ldes_real_data_v0.csv"
 
-projects_url = "https://raw.githubusercontent.com/ndmart505/LDES-Tool/main/LDES%20projecct%20tracking%20list%20v1.2_clean.xlsx"
+projects_url = "https://github.com/ndmart505/LDES-Tool/raw/refs/heads/main/LDES%20projecct%20tracking%20list%20v1.3.csv"
 
 # Streamlit Function
 def plotdata(df):
@@ -304,7 +304,7 @@ st.markdown(
 st.title("Energy Storage Technologies Visualization App")
 
 # Create tabs
-tab1, tab2 = st.tabs(["Documentation", "Visualization"])
+tab1, tab2, tab3 = st.tabs(["Documentation", "Visualization","Project Tracking"])
 
 # Documentation Tab
 with tab1:
@@ -335,3 +335,51 @@ with tab2:
         plotdata(df)
     except Exception as e:
         st.error(f"Error loading the CSV file: {e}")
+
+# Project Tracking Tab
+with tab3:
+    st.header("LDES Project Tracking")
+    st.markdown("""
+    This tab displays the LDES Project Tracking Spreadsheet with information about 
+    various energy storage projects and their current status.
+    """)
+    
+    try:
+        # Load the Excel file from GitHub
+        projects_df = pd.read_csv(projects_url)
+        st.success("Project tracking data successfully loaded")
+        
+        # Display basic statistics
+        st.subheader("Project Overview")
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            st.metric("Total Projects", len(projects_df))
+        
+        # Display the full dataframe
+        st.subheader("Project Data")
+        st.caption("Double-click on any cell to see its full content")
+
+        
+        # Configure column settings for better display
+        project_column_config = {}
+        
+        st.data_editor(
+            projects_df,
+            column_config=project_column_config,
+            use_container_width=True,
+            height=600,
+            disabled=True,
+            hide_index=True
+        )
+        
+        # Option to download the data
+        st.download_button(
+            label="Download Project Data as CSV",
+            data=projects_df.to_csv(index=False).encode('utf-8'),
+            file_name='ldes_project_tracking.csv',
+            mime='text/csv',
+        )
+
+    except Exception as e:
+        st.error(f"Error loading the project tracking file: {e}")
+        st.info("Please ensure the file exists at the specified URL and is accessible.")    
