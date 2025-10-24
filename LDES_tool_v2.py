@@ -159,6 +159,20 @@ def plotdata(df):
             low_val = row[y_low_col]
             high_val = row[y_high_col]
             
+            # Get additional info for hover (with safe defaults if columns don't exist)
+            rte_low = row.get("RTE - Low (%)", "N/A")
+            rte_high = row.get("RTE - High (%)", "N/A")
+            trl = row.get("TRL", "N/A")
+            capex_low = row.get("CAPEX Energy Basis - Low ($/kWhe)", "N/A")
+            capex_high = row.get("CAPEX Energy Basis - High ($/kWhe)", "N/A")
+            
+            # Build hover template with static CSV info
+            hover_text = f"<b>{row[x_col]}</b><br><br>"
+            hover_text += f"RTE: {rte_low} - {rte_high}%<br>" if rte_low != "N/A" else "RTE: N/A<br>"
+            hover_text += f"TRL: {trl}<br>"
+            hover_text += f"CAPEX: ${capex_low} - ${capex_high}/kWhe<br>" if capex_low != "N/A" else "CAPEX: N/A<br>"
+            hover_text += "<extra></extra>"
+            
             # Apply clipping if there's an active filter for this metric
             if clip_range:
                 # Clip the low and high values to the filter range
@@ -172,10 +186,7 @@ def plotdata(df):
                         y=[clipped_high - clipped_low],  # Height of the clipped bar
                         base=[clipped_low],  # Starting point of the clipped bar
                         name=row[x_col],
-                        hovertemplate=f"<b>{row[x_col]}</b><br>" +
-                                    f"Original Range: {low_val:.2f} - {high_val:.2f}<br>" +
-                                    f"Clipped Range: {clipped_low:.2f} - {clipped_high:.2f}<br>" +
-                                    "<extra></extra>"
+                        hovertemplate=hover_text
                     ))
             else:
                 # No clipping - show original range
@@ -183,7 +194,8 @@ def plotdata(df):
                     x=[row[x_col]],
                     y=[high_val - low_val],  # Height of the bar
                     base=[low_val],  # Starting point of the bar
-                    name=row[x_col]
+                    name=row[x_col],
+                    hovertemplate=hover_text
                 ))
         
         fig.update_layout(title=title, barmode='group')
