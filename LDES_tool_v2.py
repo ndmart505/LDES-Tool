@@ -6,7 +6,7 @@ import plotly.express as px
 # If running locally, change the 'csv_url' variable to the path of your local CSV file.
 csv_url = "https://raw.githubusercontent.com/ndmart505/LDES-Tool/main/ldes_real_data_v0.csv"
 
-projects_url = "https://github.com/ndmart505/LDES-Tool/raw/refs/heads/main/LDES%20projecct%20tracking%20list%20v1.3.csv"
+projects_url = "LDES projecct tracking list v1.2.csv"
 
 # Streamlit Function
 def plotdata(df):
