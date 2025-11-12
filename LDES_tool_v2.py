@@ -350,6 +350,7 @@ with tab2:
 
 # Project Tracking Tab
 with tab3:
+    import project_map
     st.header("LDES Project Tracking")
     st.markdown("""
     This tab displays the LDES Project Tracking Spreadsheet with information about 
@@ -357,15 +358,19 @@ with tab3:
     """)
     
     try:
+        
+
         # Load the Excel file from GitHub
         projects_df = pd.read_csv(projects_url)
         st.success("Project tracking data successfully loaded")
         
         # Display basic statistics
         st.subheader("Project Overview")
-        col1, col2, col3 = st.columns(3)
+        col1, col2 = st.columns(2)
         with col1:
             st.metric("Total Projects", len(projects_df))
+
+        project_map.render_project_map(projects_df)    
         
         # Display the full dataframe
         st.subheader("Project Data")
