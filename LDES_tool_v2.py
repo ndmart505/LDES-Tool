@@ -3,15 +3,14 @@ import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
 
-# If running locally, change the 'csv_url' variable to the path of your local CSV file.
-csv_url = "https://raw.githubusercontent.com/ndmart505/LDES-Tool/main/ldes_real_data_v0.csv"
+csv_url = "ldes_real_data_v0.csv"
 
-projects_url = "https://raw.githubusercontent.com/ndmart505/LDES-Tool/refs/heads/main/LDES%20projecct%20tracking%20list%20v1.2.csv"
+projects_url = "LDES project tracking list v3.csv"
 
 # Streamlit Function
 def plotdata(df):
     # Sidebar filters
-    st.sidebar.header("Filters")
+    st.sidebar.header("Visualization Filters")
 
     # Filter by "Technology Type"
     if "Technology Type" in df.columns:
@@ -343,7 +342,6 @@ with tab2:
     # Load data from the CSV file and plot
     try:
         df = pd.read_csv(csv_url)
-        st.success("File successfully loaded")
         plotdata(df)
     except Exception as e:
         st.error(f"Error loading the CSV file: {e}")
@@ -362,15 +360,48 @@ with tab3:
 
         # Load the Excel file from GitHub
         projects_df = pd.read_csv(projects_url)
-        st.success("Project tracking data successfully loaded")
+        
+        # Sidebar filters for Project Tracking
+        st.sidebar.divider()
+        st.sidebar.header("Project Tracking Filters")
+        
+        # Filter by "Technology Type"
+        if "Technology Type" in projects_df.columns:
+            technology_types = projects_df["Technology Type"].unique()
+            selected_technology_types = []
+            for tech_type in technology_types:
+                # Create a checkbox for each technology type
+                if st.sidebar.checkbox(f"{tech_type}", value=True, key=f"project_tech_{tech_type}"):
+                    selected_technology_types.append(tech_type)
+            # Filter the DataFrame based on selected technology types
+            filtered_projects_df = projects_df[projects_df["Technology Type"].isin(selected_technology_types)]
+        else:
+            filtered_projects_df = projects_df
+        
+        # Add Detailed Technology filter under a header
+        st.sidebar.subheader("Detailed Technology")
+        
+        # Filter by "Detailed Technology" using checkboxes
+        if "Detailed Technology" in projects_df.columns:
+            detailed_technologies = sorted(projects_df["Detailed Technology"].unique())
+            selected_detailed_technologies = []
+            for detailed_tech in detailed_technologies:
+                # Create a checkbox for each detailed technology
+                if st.sidebar.checkbox(f"{detailed_tech}", value=True, key=f"project_detailed_tech_{detailed_tech}"):
+                    selected_detailed_technologies.append(detailed_tech)
+            
+            # Apply the filter for detailed technologies
+            filtered_projects_df = filtered_projects_df[filtered_projects_df["Detailed Technology"].isin(selected_detailed_technologies)]
         
         # Display basic statistics
         st.subheader("Project Overview")
         col1, col2 = st.columns(2)
         with col1:
             st.metric("Total Projects", len(projects_df))
+        with col2:
+            st.metric("Filtered Projects", len(filtered_projects_df))
 
-        project_map.render_project_map(projects_df)    
+        project_map.render_project_map(filtered_projects_df)    
         
         # Display the full dataframe
         st.subheader("Project Data")
