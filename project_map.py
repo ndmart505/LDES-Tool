@@ -69,6 +69,7 @@ def create_choropleth_map(state_counts):
         locationmode='USA-states',
         colorscale=custom_blue_scale,
         text=state_counts['State'],
+        customdata=state_counts['State'],  # Store full state name for click events
         colorbar=dict(
             title=dict(
                 text="Number of<br>Projects",
@@ -77,7 +78,7 @@ def create_choropleth_map(state_counts):
             tickfont=dict(color='white'),
             bgcolor='rgba(0,0,0,0.5)'
         ),
-        hovertemplate='<b>%{text}</b><br>Projects: %{z}<extra></extra>',
+        hovertemplate='<b>%{text}</b><br>Projects: %{z}<br><i>Click to view projects</i><extra></extra>',
         marker_line_color='white',
         marker_line_width=1.5
     ))
@@ -96,7 +97,6 @@ def create_choropleth_map(state_counts):
             coastlinewidth=1.5,
             showlakes=True,
             projection_type='albers usa',
-            # Add state borders for all states
             showland=True,
             showcountries=False,
             subunitcolor='white',
@@ -139,29 +139,67 @@ def display_state_projects(df_clean, selected_state):
 
 def render_project_map(projects_df):
     """
-    Main function to render the project map interface.
+    Main function to render the project map interface with click interactivity.
     
     Parameters:
     - projects_df: DataFrame with all project data
     """
     st.header("LDES Project Map")
-    st.markdown("Click on a state to view projects in that location.")
     
     # Prepare data
     state_counts, df_clean = prepare_map_data(projects_df)
     
-    # Create and display map
-    fig = create_choropleth_map(state_counts)
-    st.plotly_chart(fig, use_container_width=True)
+    # Initialize session state for selected state if not exists
+    if 'selected_state' not in st.session_state:
+        st.session_state.selected_state = None
     
-    # State selection dropdown (temporary - will be replaced with click events)
-    st.subheader("View Projects by State")
-    selected_state = st.selectbox(
-        "Select a state:",
-        options=sorted(state_counts['State'].unique()),
-        index=None,
-        placeholder="Choose a state..."
+    # Create and display map with click events
+    fig = create_choropleth_map(state_counts)
+    
+    # Use plotly_events to capture click events
+    selected_points = st.plotly_chart(
+        fig, 
+        use_container_width=True,
+        key="state_map",
+        on_select="rerun"
     )
     
-    if selected_state:
-        display_state_projects(df_clean, selected_state)
+    # Handle map click selection
+    if selected_points and hasattr(selected_points, 'selection') and selected_points.selection:
+        if 'points' in selected_points.selection and len(selected_points.selection['points']) > 0:
+            # Get the clicked state from customdata
+            clicked_point = selected_points.selection['points'][0]
+            if 'customdata' in clicked_point:
+                st.session_state.selected_state = clicked_point['customdata']
+    
+    # Display selected state projects
+    st.subheader("View Projects by State")
+    
+    if st.session_state.selected_state:
+        # Show currently selected state
+        col1, col2 = st.columns([3, 1])
+        with col1:
+            st.info(f"Currently viewing: **{st.session_state.selected_state}**")
+        with col2:
+            if st.button("Clear Selection"):
+                st.session_state.selected_state = None
+                st.rerun()
+        
+        # Display projects for selected state
+        display_state_projects(df_clean, st.session_state.selected_state)
+    else:
+        st.info("Click on a state to view its projects")
+        
+        # Optional: Show dropdown as alternative selection method
+        with st.expander("Select a state manually"):
+            selected_state = st.selectbox(
+                "Select a state:",
+                options=sorted(state_counts['State'].unique()),
+                index=None,
+                placeholder="Choose a state...",
+                key="manual_state_select"
+            )
+            
+            if selected_state:
+                st.session_state.selected_state = selected_state
+                st.rerun()

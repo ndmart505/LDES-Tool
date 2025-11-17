@@ -377,22 +377,25 @@ with tab3:
             filtered_projects_df = projects_df[projects_df["Technology Type"].isin(selected_technology_types)]
         else:
             filtered_projects_df = projects_df
-        
-        # Add Detailed Technology filter under a header
-        st.sidebar.subheader("Detailed Technology")
-        
-        # Filter by "Detailed Technology" using checkboxes
+
         if "Detailed Technology" in projects_df.columns:
             detailed_technologies = sorted(projects_df["Detailed Technology"].unique())
-            selected_detailed_technologies = []
-            for detailed_tech in detailed_technologies:
-                # Create a checkbox for each detailed technology
-                if st.sidebar.checkbox(f"{detailed_tech}", value=True, key=f"project_detailed_tech_{detailed_tech}"):
-                    selected_detailed_technologies.append(detailed_tech)
-            
-            # Apply the filter for detailed technologies
-            filtered_projects_df = filtered_projects_df[filtered_projects_df["Detailed Technology"].isin(selected_detailed_technologies)]
-        
+
+            selected_detailed_technologies = st.sidebar.pills(
+                "Detailed Technologies",
+                options=detailed_technologies,
+                default=detailed_technologies,
+                selection_mode="multi"
+            )
+
+            filtered_projects_df = filtered_projects_df[
+                filtered_projects_df["Detailed Technology"].isin(selected_detailed_technologies)
+            ]
+
+
+
+
+     
         # Display basic statistics
         st.subheader("Project Overview")
         col1, col2 = st.columns(2)
