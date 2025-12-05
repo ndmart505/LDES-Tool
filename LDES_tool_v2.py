@@ -66,7 +66,7 @@ if st.session_state.page == "Documentation":
 
 
     st.markdown("""
-        the buttons above to navigate between different sections:
+        Use the buttons above to navigate between different sections:
         - **Documentation**: Learn about the data definitions, assumptions, and methodology
         - **Visualization**: Explore interactive charts and filter energy storage technology data
         - **Project Tracking**: View and analyze LDES project locations and status
