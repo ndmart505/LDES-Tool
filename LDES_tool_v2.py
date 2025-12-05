@@ -1,5 +1,4 @@
 import streamlit as st
-from streamlit_option_menu import option_menu
 import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
@@ -35,15 +34,42 @@ st.sidebar.divider()
 
 # ==================== DOCUMENTATION PAGE ====================
 if st.session_state.page == "Documentation":
+    # Hide sidebar for Documentation page
+    st.markdown(
+        """
+        <style>
+        [data-testid="stSidebar"] {
+            display: none;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+if st.session_state.page == "Documentation":
     st.title("Energy Storage Technologies Visualization App")
     
     st.markdown("""
-    Welcome to the LDES Energy Storage Technologies Visualization App. 
+        Welcome to the LDES Energy Storage Technologies Visualization App.""")
 
-    Use the buttons above to navigate between different sections:
-    - **Documentation**: Learn about the data definitions, assumptions, and methodology
-    - **Visualization**: Explore interactive charts and filter energy storage technology data
-    - **Project Tracking**: View and analyze LDES project locations and status
+    # Navigation buttons
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        if st.button("Visualization", use_container_width=True, type="primary"):
+            st.session_state.page = "Visualization"
+            st.rerun()
+    with col2:
+        if st.button("Project Tracking", use_container_width=True, type="primary"):
+            st.session_state.page = "Project Tracking"
+            st.rerun()
+    with col3:
+        st.markdown("")  # Empty column for spacing 
+
+
+    st.markdown("""
+        the buttons above to navigate between different sections:
+        - **Documentation**: Learn about the data definitions, assumptions, and methodology
+        - **Visualization**: Explore interactive charts and filter energy storage technology data
+        - **Project Tracking**: View and analyze LDES project locations and status
     """)
 
     st.header("Documentation")
