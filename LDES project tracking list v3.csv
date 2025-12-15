@@ -4,7 +4,7 @@
 ,Invinity,"https://invinity.com/case-study-soboba-fire-station/#:~:text=Invinity%20has%20delivered%20a%200.5,Station%20near%20San%20Jacinto%2C%20California.",Soboba Band of Luiseño Indians,California,0.05,0.5,10,Electrochemical,Vanadium Flow,Operational
 ,ESS,https://essinc.com/,TerraSol Energies,Pensylvania,0.075,0.5,7,Electrochemical,Iron Flow,Operational
 ,ESS,https://essinc.com/,Burbank Water and Power,California,0.075,0.5,7,Electrochemical,Iron Flow,Operational
-,Abengoa,https://solarpaces.nrel.gov/project/solana-generating-station,Atlantica Sustainable Infrastructure Liberty Interactive Corporation,Arizona,250,1500,6,Thermal,Thermal Energy Storage,Operational
+,Abengoa,https://solarpaces.nrel.gov/project/solana-generating-station,Atlantica Sustainable Infrastructure Liberty Interactive Corporation,Arizona,250,1500,6,Thermal,Molten Salt TES,Operational
 McIntosh CAES Plant,PowerSouth Energy Cooperative,https://www.baldwinemc.com/compressed-air-energy-storage-technology-generating-electricity-out-of-thin-air/,PowerSouth Energy Cooperative,Alabama,110,2860,26,Mechanical,Compressed Air Storage,Operational
 ,Vistra Energy,https://www.vistracorp.com/,Vistra Energy,California,300,1200,4,Electrochemical,Lithium-ion,Operational
 Yards Creek Pumped Storage,,http://www.pseg.com/family/power/fossil/stations/yardscreek.jsp,"PSEG Fossil, FirstEnergy Corp.",New Jersey,151,906,6,Mechanical,Pumped Hydro Storage,Operational
@@ -35,7 +35,7 @@ Long Island Bus BESS - New York Power Authority,NGK Insulators Ltd.,http://www.s
 Disney California Adventure,,http://www.districtenergy.org/assets/pdfs/2013CampConference/Wednesday/Track-B/1B.1HYMANGENTRYHODCATESPresentation.pdf,Walt Disney Parks and Resorts,California,2,8,4,Thermal,Sensible Heat,Operational
 Redding Electric Utilities (Phase 1) - Ice Energy,Ice Energy,http://www.redding.com/story/opinion/contributors/local-voices/2009/08/27/reu_on_ice/96762048/,Redding Electric Utility,California,1,6,6,Thermal,Latent Heat,Operational
 PG&E Vaca Battery Energy Storage Pilot Project,NGK Insulators Ltd.,http://www.greentechmedia.com/articles/read/energy-storage-at-grid-scale-pge-projects,Pacific Gas and Electric Company,California,2,14,7,Electrochemical,Sodium-ion,Operational
-Pennsylvania ATLAS (Aggregated Transactive Load Asset),"VCharge, Inc.",http://vcharge-energy.com/projects/,"VCharge, Inc.",Pennsylvania,2.01,10.05,5,Thermal,Heat thermal storage,Operational
+Pennsylvania ATLAS (Aggregated Transactive Load Asset),"VCharge, Inc.",http://vcharge-energy.com/projects/,"VCharge, Inc.",Pennsylvania,2.01,10.05,5,Thermal,Sodium-sulfur,Operational
 Solana Solar Generating Plant,Abengoa Solar,http://www.abengoasolar.com/export/sites/abengoasolar/resources/pdf/Solana_factsheet_09092013.pdf,"Abengoa Solar, Liberty Ventures Group",Arizona,280,1680,6,Thermal,Sensible Heat,Operational
 Bucknell University Thermal Energy Storage,DN Tanks,http://www.dntanks.com/projects/thermal-energy-storage-for-bucknell-university/,Bucknell University,Pennsylvania,1,8,8,Thermal,Sensible Heat,Operational
 State of North Carolina - DN Tanks,DN Tanks,http://www.dntanks.com/projects/thermal-energy-storage-in-north-carolina/,The State of North Carolina,North Carolina,2.59,20.72,8,Thermal,Sensible Heat,Operational
@@ -126,3 +126,4 @@ redwood coast airport microgrid,,,,California,2.2,8.8,4,Electrochemical,Lithium-
 59 federal rdcsg,,,,Massachusetts,5,20.5,4.1,Electrochemical,Lithium-ion,Operational
 71 charlotte furnace rd hybridcsg,,,,Massachusetts,1,5.4,5.4,Electrochemical,Lithium-ion,Operational
 Chukar Battery Energy Storage System,,,,Nevada,10,40,4,Electrochemical,Lithium-ion,Operational
+
