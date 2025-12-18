@@ -5,6 +5,7 @@
 ,ESS,https://essinc.com/,TerraSol Energies,Pensylvania,0.075,0.5,7,Electrochemical,Iron Flow,Operational
 ,ESS,https://essinc.com/,Burbank Water and Power,California,0.075,0.5,7,Electrochemical,Iron Flow,Operational
 ,Abengoa,https://solarpaces.nrel.gov/project/solana-generating-station,Atlantica Sustainable Infrastructure Liberty Interactive Corporation,Arizona,250,1500,6,Thermal,Molten Salt TES,Operational
+,Abengoa,https://solarpaces.nrel.gov/project/solana-generating-station,Atlantica Sustainable Infrastructure Liberty Interactive Corporation,Arizona,250,1500,6,Thermal,Molten Salt TES,Operational
 McIntosh CAES Plant,PowerSouth Energy Cooperative,https://www.baldwinemc.com/compressed-air-energy-storage-technology-generating-electricity-out-of-thin-air/,PowerSouth Energy Cooperative,Alabama,110,2860,26,Mechanical,Compressed Air Storage,Operational
 ,Vistra Energy,https://www.vistracorp.com/,Vistra Energy,California,300,1200,4,Electrochemical,Lithium-ion,Operational
 Yards Creek Pumped Storage,,http://www.pseg.com/family/power/fossil/stations/yardscreek.jsp,"PSEG Fossil, FirstEnergy Corp.",New Jersey,151,906,6,Mechanical,Pumped Hydro Storage,Operational
@@ -126,3 +127,4 @@ redwood coast airport microgrid,,,,California,2.2,8.8,4,Electrochemical,Lithium-
 59 federal rdcsg,,,,Massachusetts,5,20.5,4.1,Electrochemical,Lithium-ion,Operational
 71 charlotte furnace rd hybridcsg,,,,Massachusetts,1,5.4,5.4,Electrochemical,Lithium-ion,Operational
 Chukar Battery Energy Storage System,,,,Nevada,10,40,4,Electrochemical,Lithium-ion,Operational
+
