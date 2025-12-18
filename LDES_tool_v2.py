@@ -99,36 +99,14 @@ elif st.session_state.page == "Visualization":
         
         # Sidebar filters
         st.sidebar.header("Visualization Filters")
-
-        # Filter by "Technology Type"
-        if "Technology Type" in df.columns:
-            technology_types = df["Technology Type"].unique()
-            selected_technology_types = []
-            for tech_type in technology_types:
-                if st.sidebar.checkbox(tech_type, value=True):
-                    selected_technology_types.append(tech_type)
-            df = df[df["Technology Type"].isin(selected_technology_types)]
-
-        # Filter by "Detailed Technology" using pills
-        if "Detailed Technology" in df.columns:
-            detailed_technologies = sorted(df["Detailed Technology"].unique())
-
-            selected_detailed_technologies = st.sidebar.pills(
-                "Detailed Technologies",
-                options=detailed_technologies,
-                default=detailed_technologies,
-                selection_mode="multi"
-            )
-
-            df = df[df["Detailed Technology"].isin(selected_detailed_technologies)]
-
+        
         # Define the mapping of combined metrics to their low/high column names
         range_metrics = {
             "Duration (hr)": ("Duration - Low (hr)", "Duration - High (hr)"),
             "RTE (%)": ("RTE - Low (%)", "RTE - High (%)"),
             "Degradation (%/cycle)": ("Degradation - Low (%/cycle)", "Degradation - High (%/cycle)"),
             "Cycle Life (#)": ("Cycle Life - Low (#)", "Cycle Life - High (#)"),
-            "Ramp Rate (% rated power/min)": ("Ramp Rate - Low (% rated power/min)", "Ramp Rate - High (% rated power/min)"),
+            "Ramp Rate (% rated power/sec)": ("Ramp Rate - Low (% rated power/sec)", "Ramp Rate - High (% rated power/sec)"),
             "Response Time (s)": ("Response Time - Low (s)", "Response Time - High (s)"),
             "Energy Density (acre/MWhe)": ("Energy Density - Low (acre/MWhe)", "Energy Density - High (acre/MWhe)"),
             "Power Density (acre/MW)": ("Power Density - Low (acre/MW)", "Power Density - High (acre/MW)"),
@@ -149,15 +127,103 @@ elif st.session_state.page == "Visualization":
             if col in df.columns:
                 available_filters.append(col)
         
+        # Add categorical filters to available options
+        categorical_filters = {
+            "Geological Req.": "Geological Feature Requirement",
+            "Fire Incidents": "Historical Fire Events",
+            "Environmental Impact": "Environmental Impact",
+            "Off-Gassing ": "Off-Gassing"
+        }
+        
+        for col, display_name in categorical_filters.items():
+            if col in df.columns:
+                available_filters.append(display_name)
+        
+        # Move "Select columns to filter by" to top (after available_filters is defined)
         filter_columns = st.sidebar.multiselect("Select columns to filter by", options=available_filters)
 
         active_filter_ranges = {}
 
-        # Create sliders for selected filter columns
+        # Create sliders/pills for selected filter columns immediately after the multiselect
         filtered_df = df.copy()
         
+        # Extract boolean from Off-Gassing strings (Yes/No at start)
+        def extract_offgassing_bool(value):
+            if pd.isna(value):
+                return None
+            value_str = str(value).strip()
+            if value_str.startswith("Yes"):
+                return "Yes"
+            elif value_str.startswith("No"):
+                return "No"
+            return None
+        
+        # Mapping of display names to actual column names for categorical filters
+        categorical_filter_mapping = {
+            "Geological Feature Requirement": "Geological Req.",
+            "Historical Fire Events": "Fire Incidents",
+            "Environmental Impact": "Environmental Impact",
+            "Off-Gassing": "Off-Gassing "
+        }
+        
         for filter_col in filter_columns:
-            if filter_col in range_metrics:
+            # Check if it's a categorical filter
+            if filter_col in categorical_filter_mapping:
+                actual_col = categorical_filter_mapping[filter_col]
+                
+                if actual_col in df.columns:
+                    # Special handling for Off-Gassing
+                    if filter_col == "Off-Gassing":
+                        unique_values = ["No", "Yes"]  # Ordered: No -> Yes
+                        selected_values = st.sidebar.pills(
+                            f"Filter by {filter_col}",
+                            options=unique_values,
+                            default=unique_values,
+                            selection_mode="multi",
+                            key=f"filter_{actual_col}"
+                        )
+                        # Filter by extracted boolean while preserving full string
+                        mask = filtered_df[actual_col].apply(
+                            lambda x: extract_offgassing_bool(x) in selected_values if pd.notna(x) else False
+                        )
+                        filtered_df = filtered_df[mask]
+                    elif filter_col == "Geological Feature Requirement":
+                        # Order: No -> Yes
+                        unique_values = ["No", "Yes"]
+                        available_values = [v for v in unique_values if v in filtered_df[actual_col].dropna().unique()]
+                        selected_values = st.sidebar.pills(
+                            f"Filter by {filter_col}",
+                            options=available_values,
+                            default=available_values,
+                            selection_mode="multi",
+                            key=f"filter_{actual_col}"
+                        )
+                        filtered_df = filtered_df[filtered_df[actual_col].isin(selected_values)]
+                    elif filter_col in ["Historical Fire Events", "Environmental Impact"]:
+                        # Order: Low -> Medium -> High
+                        ordered_values = ["Low", "Medium", "High"]
+                        available_values = [v for v in ordered_values if v in filtered_df[actual_col].dropna().unique()]
+                        selected_values = st.sidebar.pills(
+                            f"Filter by {filter_col}",
+                            options=available_values,
+                            default=available_values,
+                            selection_mode="multi",
+                            key=f"filter_{actual_col}"
+                        )
+                        filtered_df = filtered_df[filtered_df[actual_col].isin(selected_values)]
+                    else:
+                        # Regular categorical filter using pills (sorted alphabetically)
+                        unique_values = sorted(filtered_df[actual_col].dropna().unique())
+                        selected_values = st.sidebar.pills(
+                            f"Filter by {filter_col}",
+                            options=unique_values,
+                            default=unique_values,
+                            selection_mode="multi",
+                            key=f"filter_{actual_col}"
+                        )
+                        filtered_df = filtered_df[filtered_df[actual_col].isin(selected_values)]
+            
+            elif filter_col in range_metrics:
                 low_col, high_col = range_metrics[filter_col]
                 
                 all_low_values = df[low_col].dropna()
@@ -198,6 +264,52 @@ elif st.session_state.page == "Visualization":
                         (filtered_df[filter_col] >= selected_range[0]) & 
                         (filtered_df[filter_col] <= selected_range[1])
                     ]
+
+        # Filter by "Technology Type"
+        if "Technology Type" in df.columns:
+            technology_types = df["Technology Type"].unique()
+            selected_technology_types = []
+            for tech_type in technology_types:
+                if st.sidebar.checkbox(tech_type, value=True):
+                    selected_technology_types.append(tech_type)
+            df = df[df["Technology Type"].isin(selected_technology_types)]
+
+        # Filter by "Detailed Technology" using pills organized by category
+        if "Detailed Technology" in df.columns:
+            # Define categories and their technologies (alphabetically ordered)
+            tech_categories = {
+                "Electrochemical": ["Iron-flow", "Lead-acid", "Lithium-ion", "Sodium-ion", "Vanadium flow", "Zinc-Anode", "Organic-Solid Flow"],
+                "Thermal": ["Molten Salt TES", "Solid Media TES - Pumped TES", "Solid Media TES - TPV", "Thermochemical"],
+                "Mechanical": ["Compressed Air Energy Storage (Caverns)", "Compressed Gas Energy Storage", "Gravitational Storage (Blocks)", "Gravitational Storage (Railcars)", "Liquid Air", "Pumped Storage Hydropower (PSH)"],
+                "Chemical": ["Hydrogen"]
+            }
+            
+            # Collect all selected detailed technologies based on active technology types
+            all_selected_detailed = []
+            
+            for tech_type in selected_technology_types:
+                if tech_type in tech_categories:
+                    st.sidebar.markdown(f"**{tech_type}**")
+                    
+                    # Get available technologies for this category
+                    available_techs = [t for t in tech_categories[tech_type] if t in df["Detailed Technology"].unique()]
+                    
+                    if available_techs:
+                        selected_techs = st.sidebar.pills(
+                            f"{tech_type}_detailed",
+                            options=available_techs,
+                            default=available_techs,
+                            selection_mode="multi",
+                            label_visibility="collapsed"
+                        )
+                        all_selected_detailed.extend(selected_techs)
+            
+            # Filter dataframe by selected detailed technologies
+            if all_selected_detailed:
+                df = df[df["Detailed Technology"].isin(all_selected_detailed)]
+            else:
+                # If no detailed technologies selected, show empty dataframe
+                df = df[df["Detailed Technology"].isin([])]
 
         # Function to create range bars with clipping
         def create_range_bar(df, x_col, y_low_col, y_high_col, title):
@@ -253,27 +365,6 @@ elif st.session_state.page == "Visualization":
             fig.update_layout(title=title, barmode='group')
             return fig
 
-        # Sidebar for custom graph
-        st.sidebar.header("Custom Graph")
-
-        y_axis_value = st.sidebar.selectbox(
-            "Select the y-axis value for the custom graph",
-            options=[
-                "Duration (hr)",
-                "RTE (%)",
-                "Degradation (%/cycle)",
-                "Cycle Life (#)",
-                "Ramp Rate (% rated power/min)",
-                "Response Time (s)",
-                "Energy Density (acre/MWhe)",
-                "Power Density (acre/MW)",
-                "CAPEX Energy Basis ($/kWhe)",
-                "CAPEX Power Basis ($/kWe)",
-                "OPEX ($/kW-year)",
-                "TRL", "ARL", "MRL"
-            ]
-        )
-
         def set_figure_size(fig):
             fig.update_layout(
                 margin=dict(l=50, r=50, t=80, b=50),
@@ -282,23 +373,13 @@ elif st.session_state.page == "Visualization":
             )
             return fig
 
-        def create_custom_graph(df, metric_type):        
-            if metric_type in range_metrics:
-                low_col, high_col = range_metrics[metric_type]
-                return create_range_bar(df, "Detailed Technology", low_col, high_col, f"{metric_type} Range")
-            else:
-                return px.bar(df, x="Detailed Technology", y=metric_type, 
-                             title=f"Custom Graph: {metric_type}", 
-                             color="Detailed Technology")
-
         # Dictionary to hold all figures
         figures = {
-            "Custom Graph": set_figure_size(create_custom_graph(filtered_df, y_axis_value)),
             "Duration Range (hr)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Duration - Low (hr)", "Duration - High (hr)", "Duration Range (hr)")),
             "Round-Trip Efficiency (RTE) Range (%)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "RTE - Low (%)", "RTE - High (%)", "Round-Trip Efficiency (RTE) Range (%)")),
             "Degradation Rate Range (%/cycle)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Degradation - Low (%/cycle)", "Degradation - High (%/cycle)", "Degradation Rate Range (%/cycle)")),
             "Cycle Life Range (#)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Cycle Life - Low (#)", "Cycle Life - High (#)", "Cycle Life Range (#)")),
-            "Ramp Rate Range (% rated power/min)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Ramp Rate - Low (% rated power/min)", "Ramp Rate - High (% rated power/min)", "Ramp Rate Range (% rated power/min)")),
+            "Ramp Rate Range (% rated power/sec)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Ramp Rate - Low (% rated power/sec)", "Ramp Rate - High (% rated power/sec)", "Ramp Rate Range (% rated power/sec)")),
             "Response Time Range (s)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Response Time - Low (s)", "Response Time - High (s)", "Response Time Range (s)")),
             "Energy Density Range (acre/MWhe)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Energy Density - Low (acre/MWhe)", "Energy Density - High (acre/MWhe)", "Energy Density Range (acre/MWhe)")),
             "Power Density Range (acre/MW)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Power Density - Low (acre/MW)", "Power Density - High (acre/MW)", "Power Density Range (acre/MW)")),
@@ -308,13 +389,76 @@ elif st.session_state.page == "Visualization":
             "Technology Readiness Level (TRL)": set_figure_size(px.bar(filtered_df, x="Detailed Technology", y="TRL", title="Technology Readiness Level (TRL)", color="Detailed Technology")),
             "Application Readiness Level (ARL)": set_figure_size(px.bar(filtered_df, x="Detailed Technology", y="ARL", title="Application Readiness Level (ARL)", color="Detailed Technology")),
             "Manufacturing Readiness Level (MRL)": set_figure_size(px.bar(filtered_df, x="Detailed Technology", y="MRL", title="Manufacturing Readiness Level (MRL)", color="Detailed Technology")),
-            "Expected Downtime": set_figure_size(px.bar(filtered_df, x="Detailed Technology", color="Expected Downtime", title="Expected Downtime")),
             "Geological Feature Requirement": set_figure_size(px.bar(filtered_df, x="Detailed Technology", color="Geological Req.", title="Geological Feature Requirement")),
             "Historical Fire Events": set_figure_size(px.bar(filtered_df, x="Detailed Technology", color="Fire Incidents", title="Historical Fire Events")),
             "Environmental Impact": set_figure_size(px.bar(filtered_df, x="Detailed Technology", color="Environmental Impact", title="Environmental Impact")),
             "Separate Power & Energy": set_figure_size(px.bar(filtered_df, x="Detailed Technology", color="Separate Power & Energy ", title="Separate Power & Energy")),
-            "Off-Gassing": set_figure_size(px.bar(filtered_df, x="Detailed Technology", color="Off-Gassing ", title="Off-Gassing")),
         }
+        
+        # Create custom Off-Gassing chart with Yes/No colors and hover details
+        def create_offgassing_chart(df):
+            if len(df) == 0:
+                # Return empty figure if no data
+                fig = go.Figure()
+                fig.update_layout(
+                    title="Off-Gassing",
+                    xaxis_title="Detailed Technology",
+                    yaxis_title="Count"
+                )
+                return fig
+            
+            # Create a new column for Yes/No display
+            df_offgassing = df.copy()
+            df_offgassing["Off-Gassing Display"] = df_offgassing["Off-Gassing "].apply(
+                lambda x: "Yes" if pd.notna(x) and str(x).strip().startswith("Yes") else "No"
+            )
+            
+            # Define colors for Yes/No
+            color_map = {"Yes": "#EF553B", "No": "#00CC96"}  # Plotly default colors
+            
+            # Track which legend items we've added
+            legend_added = set()
+            
+            # Create figure with custom hover
+            fig = go.Figure()
+            
+            for i, row in df_offgassing.iterrows():
+                offgassing_full = row.get("Off-Gassing ", "")
+                offgassing_display = row["Off-Gassing Display"]
+                
+                # Create hover text with full explanation
+                hover_text = f"<b>{row['Detailed Technology']}</b><br><br>"
+                hover_text += f"Off-Gassing: {offgassing_display}<br>"
+                hover_text += f"Details: {offgassing_full}<br>"
+                hover_text += "<extra></extra>"
+                
+                # Only show legend for first occurrence of each Yes/No
+                show_legend = offgassing_display not in legend_added
+                if show_legend:
+                    legend_added.add(offgassing_display)
+                
+                fig.add_trace(go.Bar(
+                    x=[row["Detailed Technology"]],
+                    y=[1],
+                    name=offgassing_display,
+                    legendgroup=offgassing_display,
+                    showlegend=show_legend,
+                    marker_color=color_map[offgassing_display],
+                    hovertemplate=hover_text
+                ))
+            
+            fig.update_layout(
+                title="Off-Gassing",
+                yaxis_title="Count",
+                xaxis_title="Detailed Technology",
+                margin=dict(l=50, r=50, t=80, b=50),
+                font=dict(size=12),
+                autosize=True,
+                barmode='group'
+            )
+            return fig
+        
+        figures["Off-Gassing"] = create_offgassing_chart(filtered_df)
 
         selected_chart = st.selectbox("Select Graph to View:", list(figures.keys()))
         st.plotly_chart(figures[selected_chart], use_container_width=True, config={'displayModeBar': True, 'responsive': True})
@@ -379,20 +523,45 @@ elif st.session_state.page == "Project Tracking":
         else:
             filtered_projects_df = projects_df
 
-        # Filter by "Detailed Technology"
+        # Filter by "Detailed Technology" using pills organized by category
         if "Detailed Technology" in projects_df.columns:
-            detailed_technologies = sorted(projects_df["Detailed Technology"].unique())
-
-            selected_detailed_technologies = st.sidebar.pills(
-                "Detailed Technologies",
-                options=detailed_technologies,
-                default=detailed_technologies,
-                selection_mode="multi"
-            )
-
-            filtered_projects_df = filtered_projects_df[
-                filtered_projects_df["Detailed Technology"].isin(selected_detailed_technologies)
-            ]
+            # Define categories and their technologies for project tracking (alphabetically ordered)
+            project_tech_categories = {
+                "Electrochemical": ["Iron Flow", "Lead-Acid", "Lithium-ion", "Sodium-ion", "Vanadium Flow"],
+                "Mechanical": ["Compressed Air Storage", "Geopressured Geothermal System (GGS)", "Pumped Hydro Storage"],
+                "Thermal": ["Latent Heat TES", "Molten Salt TES", "Sensible Heat TES", "Sodium-sulfur TES"]
+            }
+            
+            # Collect all selected detailed technologies based on active technology types
+            all_selected_project_detailed = []
+            
+            for tech_type in selected_technology_types:
+                if tech_type in project_tech_categories:
+                    st.sidebar.markdown(f"**{tech_type}**")
+                    
+                    # Get available technologies for this category
+                    available_techs = [t for t in project_tech_categories[tech_type] if t in projects_df["Detailed Technology"].unique()]
+                    
+                    if available_techs:
+                        selected_techs = st.sidebar.pills(
+                            f"project_{tech_type}_detailed",
+                            options=available_techs,
+                            default=available_techs,
+                            selection_mode="multi",
+                            label_visibility="collapsed"
+                        )
+                        all_selected_project_detailed.extend(selected_techs)
+            
+            # Filter dataframe by selected detailed technologies
+            if all_selected_project_detailed:
+                filtered_projects_df = filtered_projects_df[
+                    filtered_projects_df["Detailed Technology"].isin(all_selected_project_detailed)
+                ]
+            else:
+                # If no detailed technologies selected, show empty dataframe
+                filtered_projects_df = filtered_projects_df[
+                    filtered_projects_df["Detailed Technology"].isin([])
+                ]
 
         # Display basic statistics
         st.subheader("Project Overview")
