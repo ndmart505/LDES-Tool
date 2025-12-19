@@ -475,6 +475,14 @@ elif st.session_state.page == "Visualization":
                 showlegend=False
             )
             return fig
+        
+        def set_figure_size_with_legend(fig):
+            fig.update_layout(
+                margin=dict(l=50, r=50, t=80, b=50),
+                font=dict(size=12),
+                autosize=True
+            )
+            return fig
 
         # Dictionary to hold all figures
         figures = {
@@ -492,10 +500,10 @@ elif st.session_state.page == "Visualization":
             "Technology Readiness Level (TRL)": set_figure_size(px.bar(filtered_df, x="Detailed Technology", y="TRL", title="Technology Readiness Level (TRL)", color="Detailed Technology")),
             "Application Readiness Level (ARL)": set_figure_size(px.bar(filtered_df, x="Detailed Technology", y="ARL", title="Application Readiness Level (ARL)", color="Detailed Technology")),
             "Manufacturing Readiness Level (MRL)": set_figure_size(px.bar(filtered_df, x="Detailed Technology", y="MRL", title="Manufacturing Readiness Level (MRL)", color="Detailed Technology")),
-            "Geological Feature Requirement": set_figure_size(px.bar(filtered_df, x="Detailed Technology", color="Geological Req.", title="Geological Feature Requirement")),
-            "Historical Fire Events": set_figure_size(px.bar(filtered_df, x="Detailed Technology", color="Fire Incidents", title="Historical Fire Events")),
-            "Environmental Impact": set_figure_size(px.bar(filtered_df, x="Detailed Technology", color="Environmental Impact", title="Environmental Impact")),
-            "Separate Power & Energy": set_figure_size(px.bar(filtered_df, x="Detailed Technology", color="Separate Power & Energy ", title="Separate Power & Energy")),
+            "Geological Feature Requirement": set_figure_size_with_legend(px.bar(filtered_df, x="Detailed Technology", color="Geological Req.", title="Geological Feature Requirement")),
+            "Historical Fire Events": set_figure_size_with_legend(px.bar(filtered_df, x="Detailed Technology", color="Fire Incidents", title="Historical Fire Events")),
+            "Environmental Impact": set_figure_size_with_legend(px.bar(filtered_df, x="Detailed Technology", color="Environmental Impact", title="Environmental Impact")),
+            "Separate Power & Energy": set_figure_size_with_legend(px.bar(filtered_df, x="Detailed Technology", color="Separate Power & Energy ", title="Separate Power & Energy")),
         }
         
         # Create custom Off-Gassing chart with Yes/No colors and hover details
