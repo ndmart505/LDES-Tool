@@ -2,11 +2,12 @@ import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
+import numpy as np
 
 # Set default view to wide
 st.set_page_config(layout="wide", page_title="LDES Energy Storage")
 
-csv_url = "ldes_real_data_v0.csv"
+csv_url = "ldes_real_data_v1.csv"
 projects_url = "LDES project tracking list v3.csv"
 
 # Header with logo (appears on all pages)
@@ -49,7 +50,14 @@ if st.session_state.page == "Documentation":
     st.title("Energy Storage Technologies Visualization App")
     
     st.markdown("""
-        Welcome to the LDES Energy Storage Technologies Visualization App.""")
+        Welcome to the LDES Energy Storage Technologies Visualization App! This innovative tool is 
+        designed to facilitate dynamic visualization of long-duration energy storage metrics and projects.  
+
+        By leveraging data sourced from industry reports, academic literature, and expert insights, 
+        the app empowers users to effectively filter and down-select options based on high-priority metrics. 
+        Our goal is to enhance your decision-making process and provide a comprehensive understanding of 
+        energy storage technologies.
+    """)
 
     # Navigation buttons
     col1, col2, col3 = st.columns(3)
@@ -73,21 +81,97 @@ if st.session_state.page == "Documentation":
     """)
 
     st.header("Documentation")
+    st.subheader("Definitions:")
+    left_col, right_col = st.columns(2)
+    with left_col:
+        st.markdown("""
+        - **Technology Type:** Broad category of energy storage technologies.
+
+        - **Detailed Technology:** Specific energy storage technologies within a category.
+
+        - **Round Trip Efficiency AC-AC (%):** Ratio of energy discharged from the system (AC) from a 
+        starting state of charge to the energy received (AC) to bring the system to the same starting charge. 
+        Clearly provide system boundary encompassed for provided RTE.
+
+        - **Discharge Duration (hrs):** Sweet spot of discharge duration in hours. The duration at which 
+        the system discharges the rated power.
+
+        - **Degradation Rate (% Energy Capacity Change/Cycle):** Rate at which the energy capacity of the ESS degrades. 
+        Rate is dependent on ambient conditions, depth of discharge, charge rate, and discharge rate. 
+        Provide nominal values and relevant conditions.
+
+        - **Cycle Life (# of cycles):** Number of cycles expected within the life of the energy storage system. 
+        Cycles until retirement is required.
+
+        - **Ramp Rate (% rated power/s):** The speed at which storage can increase or decrease input/output.
+
+        - **Expected Downtime**
+
+        - **Response Time from off state (s):** Time required for a system to output (or input) energy at full 
+        rated power from shutdown state.
+                    
+        - **Energy Density (acre/MWhe):** Amount of land required to deploy 1 unit energy (electrical equivalent) 
+        capacity of the ESS storage block. This metric should correspond to the storage block of the ESS.<br>  
+        If the system has separate power and storage blocks (e.g., thermal energy storage), this value should 
+        represent the storage block only footprint. If the ESS power and energy components are consolidated 
+        in one package (e.g., battery container), this value should still represent the storage block footprint, 
+        which consequently is the combined footprint. Note if the value is for a combined or separate power 
+        and energy footprint.
+        """,unsafe_allow_html=True)
+
+    with right_col:
+        st.markdown("""
+        - **Power Density (acre/MWe):** Amount of land required to deploy 1 unit of power (electrical equivalent) 
+        capacity of the ESS power equipment. If the storage and power blocks are separate (e.g., thermal energy storage), 
+        this value only should correspond to the footprint of the power-related equipment. If the power and energy 
+        equipment are consolidated in one package (e.g., battery container), this value should still represent 
+        the power equipment footprint, which consequently is the combined footprint. Note if the value is for a 
+        combined or separate power and energy footprint.
+                    
+        - **Geological Feature Requirement (Yes or No):** Does the technology require a natural geological feature? 
+        Yes or No? If yes, describe the feature.
+
+        - **Historical Fire Events (≥5 = high, 1–5 = medium, 0 = low):** Number of fire events associated with LDES 
+        technologies as a result of the LDES system itself.
+
+        - **Off-gassing (Yes or No):** Does the system produce gases as a byproduct of the system operations? 
+        If yes, describe the gases produced and quantity of gases yielded per kWh of energy discharged or charged (m³/kWh).
+
+        - **Environmental Impact (Qualitative Low, Medium, High):** Will the system be negatively intrusive in the 
+        natural environment in which it is situated (water consumption, soil erosion, form-factor, etc.). 
+        Describe impact.
+
+        - **Technology Readiness Level (#):** Level of technology maturity and readiness for commercialization (1–9 scale).
+
+        - **Adoption Readiness Level (#):** Readiness of users, processes, and organization needed to commercially deploy 
+        the system (1–9).
+
+        - **Manufacturing Readiness Level (#):** Readiness of technology to be commercially manufactured at intended 
+        commercial deployment scale (1–9).
+
+        - **CAPEX Energy Basis ($/kWhe):** Total capital cost of the Energy Storage System on an electrical energy basis 
+        (four-hour basis).
+
+        - **CAPEX Power Basis ($/kWe):** Total capital cost of the Energy Storage System on an electrical power unit basis.
+
+        - **OPEX ($/kW-year):** Annual operational and maintenance expenditure associated with the Energy Storage System.
+        """)
+
+
     st.markdown("""
-    **Definitions:**
-    - **Technology Type:** Broad category of energy storage technologies (e.g., Electrochemical, Thermal).
-    - **Detailed Technology:** Specific energy storage technologies within a category (e.g., Lithium-ion, Sodium-ion).
-    - **TRL (Technology Readiness Level):** A measure of technology maturity (scale: 1–9).
-    - **ARL (Application Readiness Level):** A measure of application maturity (scale: 1–9).
+        - Data is provided by technology experts associated with Department of Energy National Laboratories.
+        - Technology experts sourced data from industry, literature, and expert judgement where applicable.
+        - Data is time-stamped to June 2025.
+        - **Disclaimer:** The quantitative metrics provided are not guaranteed to match the most up-to-date metrics 
+        offered by technology providers. The data provided herein is the best data available at the time of this release.
+    """)
 
-    **Assumptions:**
-    - Data is provided in a cleaned `.csv` file format.
-    - Numerical columns contain valid numeric data (e.g., no strings or missing values).
+    st.subheader("Methodology:")
 
-    **Methodology:**
-    - Data is loaded from a `.csv` file.
-    - Users can filter the data using sidebar controls (checkboxes, sliders, dropdowns).
-    - Visualizations are generated dynamically based on filtered data.
+    st.markdown("""
+        - Data is loaded from the baseline `.csv` file.
+        - Users can filter the data using sidebar controls (checkboxes, sliders, dropdowns).
+        - Visualizations are generated dynamically based on filtered data.
     """)
 
 # ==================== VISUALIZATION PAGE ====================
@@ -96,6 +180,9 @@ elif st.session_state.page == "Visualization":
     
     try:
         df = pd.read_csv(csv_url)
+        
+        # Debug: Check actual column names
+        # st.write("Column names in CSV:", df.columns.tolist())
         
         # Sidebar filters
         st.sidebar.header("Visualization Filters")
@@ -272,14 +359,17 @@ elif st.session_state.page == "Visualization":
             for tech_type in technology_types:
                 if st.sidebar.checkbox(tech_type, value=True):
                     selected_technology_types.append(tech_type)
-            df = df[df["Technology Type"].isin(selected_technology_types)]
+            filtered_df = filtered_df[
+                filtered_df["Technology Type"].isin(selected_technology_types)
+            ]
+
 
         # Filter by "Detailed Technology" using pills organized by category
         if "Detailed Technology" in df.columns:
             # Define categories and their technologies (alphabetically ordered)
             tech_categories = {
-                "Electrochemical": ["Iron-flow", "Lead-acid", "Lithium-ion", "Sodium-ion", "Vanadium flow", "Zinc-Anode", "Organic-Solid Flow"],
-                "Thermal": ["Molten Salt TES", "Solid Media TES - Pumped TES", "Solid Media TES - TPV", "Thermochemical"],
+                "Electrochemical": ["Iron-Flow", "Lead-acid", "Lithium-ion", "Organic-Solid Flow", "Sodium-ion", "Vanadium-Flow", "Zinc-Anode"],
+                "Thermal": ["Molten Salt TES ", "Solid Media TES - Pumped TES", "Solid Media TES - TPV ", "Thermochemical "],
                 "Mechanical": ["Compressed Air Energy Storage (Caverns)", "Compressed Gas Energy Storage", "Gravitational Storage (Blocks)", "Gravitational Storage (Railcars)", "Liquid Air", "Pumped Storage Hydropower (PSH)"],
                 "Chemical": ["Hydrogen"]
             }
@@ -306,13 +396,21 @@ elif st.session_state.page == "Visualization":
             
             # Filter dataframe by selected detailed technologies
             if all_selected_detailed:
-                df = df[df["Detailed Technology"].isin(all_selected_detailed)]
+                filtered_df = filtered_df[
+                    filtered_df["Detailed Technology"].isin(all_selected_detailed)
+                ]
+
             else:
                 # If no detailed technologies selected, show empty dataframe
                 df = df[df["Detailed Technology"].isin([])]
 
         # Function to create range bars with clipping
         def create_range_bar(df, x_col, y_low_col, y_high_col, title):
+            if len(df) == 0:
+                fig = go.Figure()
+                fig.update_layout(title=title, xaxis_title=x_col)
+                return fig
+                
             fig = go.Figure()
             
             clip_range = None
@@ -326,6 +424,10 @@ elif st.session_state.page == "Visualization":
                     break
             
             for i, row in df.iterrows():
+                # Skip rows with NaN values
+                if pd.isna(row[y_low_col]) or pd.isna(row[y_high_col]):
+                    continue
+                    
                 low_val = row[y_low_col]
                 high_val = row[y_high_col]
                 
@@ -369,7 +471,8 @@ elif st.session_state.page == "Visualization":
             fig.update_layout(
                 margin=dict(l=50, r=50, t=80, b=50),
                 font=dict(size=12),
-                autosize=True
+                autosize=True,
+                showlegend=False
             )
             return fig
 
@@ -493,6 +596,8 @@ elif st.session_state.page == "Visualization":
 
     except Exception as e:
         st.error(f"Error loading the CSV file: {e}")
+        import traceback
+        st.code(traceback.format_exc())
 
 # ==================== PROJECT TRACKING PAGE ====================
 elif st.session_state.page == "Project Tracking":
