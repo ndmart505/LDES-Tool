@@ -688,7 +688,7 @@ elif st.session_state.page == "Project Tracking":
         project_map.render_project_map(filtered_projects_df)    
         
         # Display the full dataframe
-        st.subheader("Project Data")
+        st.subheader("All Projects")
         st.caption("Double-click on any cell to see its full content")
 
         project_column_config = {}
