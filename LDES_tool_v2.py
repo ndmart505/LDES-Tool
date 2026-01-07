@@ -112,23 +112,18 @@ if st.session_state.page == "Documentation":
         rated power from shutdown state.
                     
         - **Energy Density (acre/MWhe):** Amount of land required to deploy 1 unit energy (electrical equivalent) 
-        capacity of the ESS storage block. This metric should correspond to the storage block of the ESS.<br>  
-        If the system has separate power and storage blocks (e.g., thermal energy storage), this value should 
-        represent the storage block only footprint. If the ESS power and energy components are consolidated 
-        in one package (e.g., battery container), this value should still represent the storage block footprint, 
-        which consequently is the combined footprint. Note if the value is for a combined or separate power 
-        and energy footprint.
-        """,unsafe_allow_html=True)
-
-    with right_col:
-        st.markdown("""
+        capacity of the ESS storage block. This metric should correspond to the storage block of the ESS.
+                    
         - **Power Density (acre/MWe):** Amount of land required to deploy 1 unit of power (electrical equivalent) 
         capacity of the ESS power equipment. If the storage and power blocks are separate (e.g., thermal energy storage), 
         this value only should correspond to the footprint of the power-related equipment. If the power and energy 
         equipment are consolidated in one package (e.g., battery container), this value should still represent 
         the power equipment footprint, which consequently is the combined footprint. Note if the value is for a 
-        combined or separate power and energy footprint.
-                    
+        combined or separate power and energy footprint.            
+        """,unsafe_allow_html=True)
+
+    with right_col:
+        st.markdown("""              
         - **Geological Feature Requirement (Yes or No):** Does the technology require a natural geological feature? 
         Yes or No? If yes, describe the feature.
 
@@ -157,6 +152,8 @@ if st.session_state.page == "Documentation":
 
         - **OPEX ($/kW-year):** Annual operational and maintenance expenditure associated with the Energy Storage System.
         """)
+
+    st.subheader("Notes:")    
 
 
     st.markdown("""
