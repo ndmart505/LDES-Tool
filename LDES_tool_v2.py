@@ -3,6 +3,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
 import numpy as np
+import project_map
 
 # Set default view to wide
 st.set_page_config(layout="wide", page_title="LDES Energy Storage")
@@ -181,9 +182,6 @@ elif st.session_state.page == "Visualization":
     try:
         df = pd.read_csv(csv_url)
         
-        # Debug: Check actual column names
-        # st.write("Column names in CSV:", df.columns.tolist())
-        
         # Sidebar filters
         st.sidebar.header("Visualization Filters")
         
@@ -226,8 +224,7 @@ elif st.session_state.page == "Visualization":
             if col in df.columns:
                 available_filters.append(display_name)
         
-        # Move "Select columns to filter by" to top (after available_filters is defined)
-        filter_columns = st.sidebar.multiselect("Select columns to filter by", options=available_filters)
+        filter_columns = st.sidebar.multiselect("Select data to filter by", options=available_filters)
 
         active_filter_ranges = {}
 
@@ -617,8 +614,6 @@ elif st.session_state.page == "Project Tracking":
     """)
     
     try:
-        import project_map
-        
         # Load the CSV file
         projects_df = pd.read_csv(projects_url)
         
@@ -712,4 +707,5 @@ elif st.session_state.page == "Project Tracking":
 
     except Exception as e:
         st.error(f"Error loading the project tracking file: {e}")
-        st.info("Please ensure the file exists at the specified URL and is accessible.")
+        import traceback
+        st.code(traceback.format_exc())
