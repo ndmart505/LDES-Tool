@@ -1,0 +1,128 @@
+﻿Project name,Tech provider ,Website,Customer/Owner,State,Power [MW],Energy  [MWh],Duration [h],Technology Type,Detailed Technology,Status
+Sacramento Power Academy,ESS,"https://www.smud.org/Corporate/About-us/News-and-Media/2024/2024/SMUDs-$10-million-state-grant-advances-long-duration-battery-storage-technology-in-Sacramento#:~:text=In%20September%202023%2C%20ESS%20commissioned,%2Dfunded%203.6%2Dmegawatt%20addition.",Sacramento Municipality Utility,California,0.3,3,12,Electrochemical,Iron Flow,Operational
+EarthStore,Sage Geosystems,https://www.sagegeosystems.com/,NA,Texas,0.2,3.6,18,Mechanical,Geopressured Geothermal System (GGS),Operational
+Soboba Fire Station,Invinity,"https://invinity.com/case-study-soboba-fire-station/#:~:text=Invinity%20has%20delivered%20a%200.5,Station%20near%20San%20Jacinto%2C%20California.",Soboba Band of Luiseño Indians,California,0.05,0.5,10,Electrochemical,Vanadium Flow,Operational
+Team Toyota of Glen Mills,ESS,https://www.solarpowerworldonline.com/2025/10/pennsylvania-toyota-dealership-installs-significant-solar-storage-system/,TerraSol Energies,Pensylvania,0.075,0.5,7,Electrochemical,Iron Flow,Operational
+BWP EcoCampus,ESS,https://essinc.com/ess-and-burbank-water-power-celebrate-commissioning-of-first-iron-flow-battery-system-on-bwp-ecocampus/,Burbank Water and Power,California,0.075,0.5,7,Electrochemical,Iron Flow,Operational
+Solana Generating Station,Abengoa,https://solarpaces.nrel.gov/project/solana-generating-station,Atlantica Sustainable Infrastructure Liberty Interactive Corporation,Arizona,250,1500,6,Thermal,Molten Salt TES,Operational
+McIntosh CAES Plant,PowerSouth Energy Cooperative,https://www.baldwinemc.com/compressed-air-energy-storage-technology-generating-electricity-out-of-thin-air/,PowerSouth Energy Cooperative,Alabama,110,2860,26,Mechanical,Compressed Air Storage,Operational
+Moss Landing Power Plant,Vistra Energy,https://www.energy-storage.news/moss-landing-worlds-biggest-battery-storage-project-is-now-3gwh-,Pacific Gas and Electric Company,California,300,1200,4,Electrochemical,Lithium-ion,Operational
+Yards Creek Pumped Storage,,https://hydroreform.org/hydro-project/yards-creek-p-2309/,Jersey Central Power & Lt Co,New Jersey,151,906,6,Mechanical,Pumped Hydro Storage,Operational
+Cabin Creek Generating Station,Xcel Energy,https://co.my.xcelenergy.com/customersupport/s/projects/cabin-creek-pumped-storage-project,Colorado Public Utility Comission,Colorado,324,1296,4,Mechanical,Pumped Hydro Storage,Operational
+San Luis (William R. Gianelli) Pumped Storage Hydroelectric Powerplant,,https://www.usbr.gov/projects/pdf.php?id=55,U S Bureau of Reclamation (45%); California Dept. of Water Resources (55%),California,53,424,8,Mechanical,Pumped Hydro Storage,Operational
+Northfield Mountain Pumped Storage Hydroelectricity Facility,,https://firstlight.energy/energy/northfield-mountain-generating-station/,FirstLight Power Resources (GDF Suez Energy North America),Massachusetts,1119,8482.02,7.58,Mechanical,Pumped Hydro Storage,Operational
+Castaic Pumped-Storage Plant,"Toshiba Hydro Power, ABB",https://www.power-technology.com/data-insights/power-plant-profile-castaic-us/,"Los Angeles Department of Water and Power, Department of Water Resources of the State of California",California,1247,12470,10,Mechanical,Pumped Hydro Storage,Operational
+Ludington Pumped Storage,,https://www.consumersenergy.com/about-us/electric-generation/renewables/hydroelectric/pumped-storage-hydro-electricity,"Consumers Energy Co (51%), Detroit Edison (DTE) Electric Company(49%)",Michigan,2172,19548,9,Mechanical,Pumped Hydro Storage,Operational
+John W. Keys III Pump-Generating Plant,HDR,http://www.usbr.gov/pn/grandcoulee/pubs/powergeneration.pdf,Bonneville Power Administration,Washington,314,25120,80,Mechanical,Pumped Hydro Storage,Operational
+Blenheim-Gilboa Pumped Storage Power Project,Hitachi,https://en.wikipedia.org/wiki/Blenheim%E2%80%93Gilboa_Hydroelectric_Power_Station,New York Power Authority (NYPA),New York,1160,17400,15,Mechanical,Pumped Hydro Storage,Operational
+Bear Swamp Hydroelectric Power Station,Hitachi,http://www.berkshireeagle.com/local/ci_27767841/bear-swamp-hydroelectric-generation-project-up-license-renewal,"Brookfield Power, Inc., Emera, Inc.",Massachusetts,600,3000,5,Mechanical,Pumped Hydro Storage,Operational
+Raccoon Mountain Pumped Storage Plant,,https://tva.com/Energy/Our-Power-System/Hydroelectric/Raccoon-Mountain,Tennessee Valley Authority,Tennessee,1652,36344,22,Mechanical,Pumped Hydro Storage,Operational
+Fairfield Pumped Storage,,https://www.power-technology.com/data-insights/power-plant-profile-fairfield-pumped-storage-us/,Dominion Energy South Carolina,South Carolina,511.2,3563.064,6.97,Mechanical,Pumped Hydro Storage,Operational
+Mount Elbert Power Plant,,https://www.usbr.gov/projects/index.php?id=568,Bureau of Reclamation,Colorado,200,2400,12,Mechanical,Pumped Hydro Storage,Operational
+Big Creek (John S. Eastwood) Pumped Storage,,http://newsroom.edison.com/stories/big-creek-hydroelectric-system-produces-hardest-working-water-in-the-world,Southern California Edison,California,199.8,3530.466,17.67,Mechanical,Pumped Hydro Storage,Operational
+McIntosh CAES Plant - Unit 1 Facility Stores Compressed Air in a Solution-Mined Salt Cavern,Dresser-Rand,https://www.baldwinemc.com/compressed-air-energy-storage-technology-generating-electricity-out-of-thin-air/,PowerSouth Energy Cooperative,Alabama,110,2860,26,Mechanical,Compressed Air Storage,Operational
+JC Penney Headquarters - Calmac,CALMAC,http://www.calmac.com/press-release-jcpenney-headquarters-benefits-from-25-years-of-energy-storage-using-calmac-icebank-technology,JC Penney,Texas,4.425,53.1,12,Thermal,Latent Heat TES,Operational
+Bad Creek Pumped Hydro Storage,,https://badcreekpumpedstorage.com/,Duke Energy,South Carolina,1065,25560,24,Mechanical,Pumped Hydro Storage,Operational
+VA Medical Center,DN Tanks,https://www.dntanks.com/projects/va-medical-center/,"The Dallas, Texas Veterans Administration",Texas,2.3,18.4,8,Thermal,Sensible Heat TES,Operational
+TAS Thermal Storage with Combined-Cycle Cogeneration Plant,TAS Energy,https://tas.com/,"Calpine Clear Lake Cogeneration, Inc.",Texas,5.1,51,10,Thermal,Sensible Heat TES,Operational
+University of Arizona - Calmac,CALMAC,http://www.calmac.com/large-energy-storage-project-university-of-arizona,University of Arizona,Arizona,3,18,6,Thermal,Latent Heat TES,Operational
+AEP Bluffton NaS Energy Storage System,NGK Insulators Ltd.,https://energy.gov/sites/prod/files/2014/06/f17/EACJune2014-2Weaver.pdf,American Electric Power (AEP),Ohio,2,12,6,Electrochemical,Sodium-ion,Operational
+XCEL NGK MinnWind Wind-to-Battery Project,NGK Insulators Ltd.,https://www.xcelenergy.com/staticfiles/xe/Corporate/Environment/wind-to-battery%20fact%20sheet.pdf,Xcel Energy,Minnesota,1,7.2,7.2,Electrochemical,Sodium-ion,Operational
+AEP Milton NaS Battery Energy Storage System,NGK Insulators Ltd.,https://www.utilitydive.com/news/software-upgrade-to-old-sodium-battery-marks-shift-in-aeps-storage-strateg/442223/,American Electric Power (AEP),West Virginia,2,12,6,Electrochemical,Sodium-ion,Operational
+AEP Churubusco NaS Battery Energy Storage System,NGK Insulators Ltd.,https://energy.gov/sites/prod/files/2014/06/f17/EACJune2014-2Weaver.pdf,American Electric Power (AEP),Indiana,2,12,6,Thermal,Sodium-Sulfur TES,Operational
+TAS Texas Cooperative,DN Tanks,https://www.dntanks.com/projects/tes-for-jacksboros-natural-gas-power-plant/,Brazos Electric Cooperative,Texas,90,1080,12,Thermal,Sodium-ion,Operational
+Long Island Bus BESS - New York Power Authority,NGK Insulators Ltd.,https://library.e.abb.com/public/4c36bbc8e156a896c12578d1005167c6/Case_Note_BESS_NYPA-web.pdf,Metro Transit Authority (NYC),New York,1,6.5,6.5,Electrochemical,Sodium-ion,Operational
+Disney California Adventure,,https://www.districtenergy-digital.org/districtenergy/2013Q2/MobilePagedArticle.action?articleId=1723543#articleId1723543,Walt Disney Parks and Resorts,California,2,8,4,Thermal,Sensible Heat TES,Operational
+Redding Electric Utilities (Phase 1) - Ice Energy,Ice Energy,http://www.redding.com/story/opinion/contributors/local-voices/2009/08/27/reu_on_ice/96762048/,Redding Electric Utility,California,1,6,6,Thermal,Latent Heat TES,Operational
+PG&E Vaca Battery Energy Storage Pilot Project,NGK Insulators Ltd.,"https://investor.pgecorp.com/news-events/press-releases/press-release-details/2016/PGE-Battery-Storage-Systems-Are-First-to-Successfully-Participate-in-California-Electricity-Markets/default.aspx#:~:text=The%20project%2C%20funded%20by%20California's,System%20Operator%20(CAISO)%20markets.",Pacific Gas and Electric Company,California,2,14,7,Electrochemical,Sodium-ion,Operational
+Pennsylvania ATLAS (Aggregated Transactive Load Asset),"VCharge, Inc.",,"VCharge, Inc.",Pennsylvania,2.01,10.05,5,Electrochemical,Lithium-ion,Operational
+Solana Solar Generating Plant,Abengoa Solar,https://en.wikipedia.org/wiki/Solana_Generating_Station,"Abengoa Solar, Liberty Ventures Group",Arizona,280,1680,6,Thermal,Sensible Heat TES,Operational
+Bucknell University Thermal Energy Storage,DN Tanks,http://www.dntanks.com/projects/thermal-energy-storage-for-bucknell-university/,Bucknell University,Pennsylvania,1,8,8,Thermal,Sensible Heat TES,Operational
+State of North Carolina - DN Tanks,DN Tanks,http://www.dntanks.com/projects/thermal-energy-storage-in-north-carolina/,The State of North Carolina,North Carolina,2.59,20.72,8,Thermal,Sensible Heat TES,Operational
+Crescent Dunes Solar Energy Project,SolarReserve,https://en.wikipedia.org/wiki/Crescent_Dunes_Solar_Energy_Project,"Tonopah Solar Energy, LLC",Nevada,110,1100,10,Thermal,Sensible Heat TES,Operational
+California State University Long Beach Campus - AMS,Tesla,https://www.utilitydive.com/news/ams-will-install-12-mwh-of-tesla-batteries-at-cal-state-to-cut-usage-mitig/421635/,,California,1,6,6,Electrochemical,Lithium-ion,Operational
+Deepwater Wind-New York,General Electric,http://renewables.seenews.com/news/deepwater-wind-plans-90-mw-offshore-wind-15-mw-storage-in-ny-504865,Deepwater Wind LLC,New York,15,60,4,Electrochemical,Lithium-ion,Operational
+Olivenhain-Hodges Storage Project,,https://www.sdcwa.org/sites/default/files/lake_hodges_fs.pdf,San Diego County Water Authority,California,21,126,6,Mechanical,Pumped Hydro Storage,Operational
+Olivenhain-Hodges Storage Project,,http://www.sdcwa.org/lake-hodges-projects,San Diego County Water Authority,California,21,126,6,Mechanical,Pumped Hydro Storage,Operational
+Nissan Technical Center North America,CALMAC,http://www.calmac.com/,Nissan,Michigan,1.425,22.8,16,Thermal,Latent Heat TES,Operational
+University of Central Florida - DN Tanks,DN Tanks,https://www.dntanks.com/projects/the-university-of-central-floridas-tes-tank/,The University of Central Florida,Florida,3,24,8,Thermal,Sensible Heat TES,Operational
+Los Angeles Community College District - Calmac,CALMAC,,Los Angeles Community College District,California,4.62,27.72,6,Thermal,Latent Heat TES,Operational
+Japan-US Collaborative Smart Grid Project,NGK Insulators Ltd.,https://www.nedo.go.jp/content/100763123.pdf,New Energy and Industrial Technology Development Organization (NEDO),New Mexico,1,6,6,Electrochemical,Sodium-ion,Operational
+Nordstrom (Ala Moana Center) - Calmac,CALMAC,http://the.honoluluadvertiser.com/article/2008/Mar/18/bz/hawaii803180341.html,"Nordstrom, Inc.",Hawaii,1.2,7.2,6,Thermal,Latent Heat TES,Operational
+Yerba Buena Battery Energy Storage Pilot Project - Pacific Gas & Electric Company,NGK Insulators Ltd.,https://eepower.com/news/pge-energy-commission-unveil-4mw-nas-battery-energy-storage-in-san-jose/#,Pacific Gas and Electric Company,California,4,28,7,Electrochemical,Sodium-ion,Operational
+Escondido Energy Storage,,https://www.sdge.com/major-projects/battery-energy-storage-systems-bess-and-microgrids,SDG&E,California,30,120,4,Electrochemical,Lithium-ion,Operational
+Pueblo Air Cooled Run Test Facility - Calmac,CALMAC Corp.,http://www.calmac.com/how-energy-storage-works,Ingersoll Rand,Colorado,3.517,14.068,4,Thermal,Latent Heat TES,Operational
+Charleston NaS Energy Storage Project - AEP,NGK Insulators Ltd.,https://www.aep.com/news/stories/view/788/,American Electric Power (AEP),West Virginia,1.2,7.2,6,Electrochemical,Sodium-ion,Operational
+SCE Catalina Island Energy Storage,NGK Insulators Ltd.,https://www.sandc.com/globalassets/sac-electric/content-callouts/solutions/edoc_075872.pdf,Southern California Edison,California,1,6.8,6.8,Electrochemical,Sodium-ion,Operational
+SDG&E El Cajon Substation - AES,Samsung SDI,https://www.power-technology.com/marketdata/sdge-el-cajon-substation-bess-us/?cf-view,San Diego Gas & Electric (SDG&E),California,7.5,30,4,Electrochemical,Lithium-ion,Operational
+Santa Paula 1 - Western Grid Development LLC,Samsung SDI,"https://pv-magazine-usa.com/2017/01/03/sce-awaits-third-energy-storage-unit-approval/#:~:text=The%20other%20two%20storage%20projects%20are%20a,MW%20unit%20from%20Western%20Grid%20Development%20LLC&text=The%20Western%20Grid%20project%2C%20called%20Santa%20Paula%201%2C%20is%20being",Western Grid Development LLC,California,5,20,4,Electrochemical,Lithium-ion,Operational
+AltaGas Pomona Energy - SCE / Greensmith Energy,,http://www.greensmithenergy.com/greensmith-altagas-receive-grid-edge-award-record-setting-pomona-energy-storage-project,AltaGas,California,20,80,4,Electrochemical,Lithium-ion,Operational
+Clinton County BESS - Exelon / RES,Samsung,http://www.prnewswire.com/news-releases/exelon-generation-and-res-announce-10-mw-battery-storage-project-300254050.html,Exelon Generation,Ohio,10,250,25,Electrochemical,Lithium-ion,Operational
+ConEdison Interoperability of Demand Response Resources: Thermal,CALMAC,https://smartgrid.gov/project/consolidated_edison_company_ny_interoperability_demand_response_resources_demonstration_ny/,Verizon,New York,1,10,10,Thermal,Latent Heat TES,Operational
+Bethel Energy Center - Apex Compressed Air Storage - 317 MW Compressed Air Storage,Dresser-Rand,http://www.apexcaes.com/bethel-energy-center,Apex Compressed Air Storage,Texas,317,30432,96,Mechanical,Compressed Air Storage,Operational
+Shell Point Retirement Village,CALMAC,http://www.calmac.com/stuff/contentmgr/files/0/9e42be7ce800b33ed5d169183104947a/files/shellpointcasestudy.pdf,Shell Point Retirement Village,Florida,4.8,28.8,6,Thermal,Latent Heat TES,Operational
+Cache Creek Casino,DN Tanks,http://www.dntanks.com/projects/cache-creek-casino-tes-tank/,Cache Creek Casino Resort,California,1.3,7.8,6,Thermal,Sensible Heat TES,Operational
+Texas Instruments Manufacturing Plant,DN Tanks,http://www.dntanks.com/project-profiles.htm,Texas Instruments,Texas,6.4,51.2,8,Thermal,Sensible Heat TES,Operational
+AES Alamitos Energy Storage Array,AES Energy Storage,http://www.aesenergystorage.com/2014/11/05/aes-help-sce-meet-local-power-reliability-20-year-power-purchase-agreement-energy-storage-california-new-facility-will-provide-100-mw-interconnected-storage-equivalent-200-mw/?utm_source=Energy+Storage+Report&amp;utm_campaign=859e0b3526-ESR_2_10_1210_2_2012&amp;utm_medium=email&amp;utm_term=0_bd57f7e9aa-859e0b3526-80843329,AES Southland,California,100,400,4,Electrochemical,Lithium-ion,Operational
+UCSD Thermal Storage Tank,,https://www.energystorage.ucsd.edu/projects/demonstrating-redoxblox-thermochemical-energy-storage-at-uc-san-diego,UCSD,California,4,16,4,Thermal,Sensible Heat TES,Operational
+Underwriters Laboratories - Calmac,,http://www.calmac.com/underwriters-laboratories,Underwriters Laboratories,Illinois,1.25,17.5,14,Thermal,Latent Heat TES,Operational
+New York City 1 MW Aggregated BTM - Glenwood Management,EnerSys,https://www.multihousingnews.com/post/glenwood-to-build-distributed-energy-storage-for-nyc-apartments/,Glenwood Management,New York,1,4,4,Electrochemical,Lead-Acid,Operational
+Sarasota County School District,CALMAC,http://www.calmac.com/sarasota-county-school-district-achieves-20-mw,Sarasota County,Florida,20,160,8,Thermal,Latent Heat TES,Operational
+UCI Microgrid: Thermal Storage,,https://www.apep.uci.edu/UCI_Micro_Grid.html,University of California Irvine,California,6.59,52.72,8,Thermal,Sensible Heat TES,Operational
+Rockefeller Center Thermal Storage,CALMAC,http://www.calmac.com/energy-storage-case-study-rockefeller-center,Tishman Speyer,New York,1.025,15.375,15,Thermal,Latent Heat TES,Operational
+Power Station Generation Storage,TAS Energy,https://tas.com/wp-content/uploads/2022/08/1100-MW-Power-Station.pdf,PECO/Exelon Corporation,Pennsylvania,6,48,8,Thermal,Sensible Heat TES,Operational
+McCoy Solar Hybrid,,,,California,230,920,4,Electrochemical,Lithium-ion,Operational
+Babcock Solar Center Hybrid,,,,Florida,10,40,4,Electrochemical,Lithium-ion,Operational
+Citrus Solar Center Hybrid,,,,Florida,4,16,4,Electrochemical,Lithium-ion,Operational
+Blythe Solar II LLC,,https://lorenz-g.github.io/tesla-megapack-tracker/projects/64.html,,California,115,460,4,Electrochemical,Lithium-ion,Operational
+Mira Loma Facility,,,,California,10,40,4,Electrochemical,Lithium-ion,Operational
+Mira Loma Facility,,,,California,10,40,4,Electrochemical,Lithium-ion,Operational
+Pinal Central Center Hybrid,,,,Arizona,10,40,4,Electrochemical,Lithium-ion,Operational
+HEBT WLA 1,,,Sk Holdings Co. Ltd. (50%); SUSI Partners AG (50%),California,1,6.9,6.9,Electrochemical,Lithium-ion,Operational
+HEBT Irvine 1,,,Macquarie Capital,California,1,6.5,6.5,Electrochemical,Lithium-ion,Operational
+HEBT Irvine 1,,,Macquarie Capital,California,4.5,27,6,Electrochemical,Lithium-ion,Operational
+HEBT Irvine 2,,,Macquarie Capital,California,2.5,15,6,Electrochemical,Lithium-ion,Operational
+HEBT Irvine 2,,,Macquarie Capital,California,3.3,19.8,6,Electrochemical,Lithium-ion,Operational
+AES ES Gilbert,,,,Arizona,10,40,4,Electrochemical,Lithium-ion,Operational
+Punkin Center,,,,Arizona,2,8,4,Electrochemical,Lithium-ion,Operational
+I25 Battery Storage,,,,Colorado,4,16,4,Electrochemical,Lithium-ion,Operational
+GMP SolarStorageMilton Hybrid,,,GMP VT Microgrid LLC,Vermont,2,8,4,Electrochemical,Lithium-ion,Operational
+GMP SolarStorageFerrisburgh Hybrid,,,GMP VT Microgrid LLC,Vermont,2,8,4,Electrochemical,Lithium-ion,Operational
+GMP SolarStorageEssex Hybrid,,,GMP VT Microgrid LLC,Vermont,2,8,4,Electrochemical,Lithium-ion,Operational
+Orange County 2,,,,California,9,36,4,Electrochemical,Lithium-ion,Operational
+Orange County 3,,,,California,6,24,4,Electrochemical,Lithium-ion,Operational
+East Hampton Center,,,,New York,5,40,8,Electrochemical,Lithium-ion,Operational
+Montauk Center,,,,New York,5,40,8,Electrochemical,Lithium-ion,Operational
+98th Street,,,,New York,2,12,6,Electrochemical,Lithium-ion,Operational
+Wildcat I LLC,,,,California,3,12,4,Electrochemical,Lithium-ion,Operational
+Hecate Johanna Facility,,,,California,10,40,4,Electrochemical,Lithium-ion,Operational
+Hecate Johanna Facility,,,,California,10,40,4,Electrochemical,Lithium-ion,Operational
+Cronin Road Solar 1 LLC CSG Hybrid,,,,Massachusetts,1.5,7.7,5.133333333,Electrochemical,Lithium-ion,Operational
+AES Kekaha Solar LLC Hybrid,,,,Hawaii,14,70,5,Electrochemical,Lithium-ion,Operational
+San Diego Zoo,,,,California,1,4,4,Electrochemical,Lithium-ion,Operational
+Middletown Solar 1 LLC Hybrid CSG,,,,New York,1.6,6.6,4.125,Electrochemical,Lithium-ion,Operational
+Solar BESS Hybrid,,,Gas South,Georgia,1,4,4,Electrochemical,Lithium-ion,Operational
+NY3,,,,New York,3,12,4,Electrochemical,Lithium-ion,Operational
+Allergan,,,Sk Holdings Co. Ltd. (50%); SUSI Partners AG (50%),California,1.5,9,6,Electrochemical,Lithium-ion,Operational
+Baker,,,Sk Holdings Co. Ltd. (50%); SUSI Partners AG (50%),California,1.2,6.3,5.25,Electrochemical,Lithium-ion,Operational
+CSU Long Beach,,,Sk Holdings Co. Ltd. (50%); SUSI Partners AG (50%),California,2.5,15,6,Electrochemical,Lithium-ion,Operational
+DATS,,,Sk Holdings Co. Ltd. (50%); SUSI Partners AG (50%),California,1,6,6,Electrochemical,Lithium-ion,Operational
+Downey,,,Sk Holdings Co. Ltd. (50%); SUSI Partners AG (50%),California,2,13,6.5,Electrochemical,Lithium-ion,Operational
+LAWRP,,,Sk Holdings Co. Ltd. (50%); SUSI Partners AG (50%),California,1,5,5,Electrochemical,Lithium-ion,Operational
+Long Beach Convention Center,,,Sk Holdings Co. Ltd. (50%); SUSI Partners AG (50%),California,1.5,8.6,5.733333333,Electrochemical,Lithium-ion,Operational
+OCSD,,,Sk Holdings Co. Ltd. (50%); SUSI Partners AG (50%),California,4.9,32.6,6.653061224,Electrochemical,Lithium-ion,Operational
+SOCCD,,,Sk Holdings Co. Ltd. (50%); SUSI Partners AG (50%),California,1.3,7.2,5.538461538,Electrochemical,Lithium-ion,Operational
+Silverstrand Grid,,,,California,11,44,4,Electrochemical,Lithium-ion,Operational
+Saticoy,,,,California,100,400,4,Electrochemical,Lithium-ion,Operational
+Cal Flats BESS,,,,California,60,242,4.033333333,Electrochemical,Lithium-ion,Operational
+Desert Harvest II LLC,,,,California,35,140,4,Electrochemical,Lithium-ion,Operational
+Horn Rapids Solar and Training,,,,Washington,1,4,4,Electrochemical,Lithium-ion,Operational
+Volney II,,,,New York,3,12,4,Electrochemical,Lithium-ion,Operational
+Wynwood,,,,Florida,10,40,4,Electrochemical,Lithium-ion,Operational
+Kearsarge Haverhill,,,,Massachusetts,2,9,4.5,Electrochemical,Lithium-ion,Operational
+Dunstable Solar 1 LLC,,,,Massachusetts,4.5,20.2,4.488888889,Electrochemical,Lithium-ion,Operational
+Sanborn BESS 2,,,,California,100,400,4,Electrochemical,Lithium-ion,Operational
+Redwood Coast Airport Microgrid,,,,California,2.2,8.8,4,Electrochemical,Lithium-ion,Operational
+59 Federal RD CSG,,,,Massachusetts,5,20.5,4.1,Electrochemical,Lithium-ion,Operational
+71 Charlotte Furnace RD Hybrid CSG,,,,Massachusetts,1,5.4,5.4,Electrochemical,Lithium-ion,Operational
+Chukar Battery Energy Storage System,,,,Nevada,10,40,4,Electrochemical,Lithium-ion,Operational

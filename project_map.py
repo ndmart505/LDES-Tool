@@ -39,9 +39,6 @@ def prepare_map_data(df):
 
 
 def create_choropleth_map(state_counts):
-    """
-    Generate US choropleth map with capped 1–10+ color scale.
-    """
     custom_blue_scale = [
         [0.0, '#6baed6'],
         [0.25, '#4292c6'],
@@ -97,11 +94,12 @@ def create_choropleth_map(state_counts):
             subunitcolor='white',
             subunitwidth=1.5,
         ),
+        dragmode=False,
         paper_bgcolor='rgba(0,0,0,0)',
         plot_bgcolor='rgba(0,0,0,0)',
         font=dict(color='white'),
         margin=dict(l=0, r=0, t=60, b=0),
-        height=550
+        height=550,
     )
 
     return fig
@@ -289,7 +287,8 @@ def render_project_map(projects_df):
         use_container_width=True,
         key=map_key,
         on_select="rerun",
-        selection_mode="points"
+        selection_mode="points",
+        config={'scrollZoom': False, 'displayModeBar': False}
     )
 
     # Check if user clicked on the map

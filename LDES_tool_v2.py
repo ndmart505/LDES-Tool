@@ -9,7 +9,7 @@ import project_map
 st.set_page_config(layout="wide", page_title="LDES Energy Storage")
 
 csv_url = "ldes_real_data_v1.csv"
-projects_url = "LDES project tracking list v3.csv"
+projects_url = "LDES project tracking list v4.csv"
 
 # Header with logo (appears on all pages)
 st.markdown(
@@ -51,7 +51,7 @@ if st.session_state.page == "Documentation":
     st.title("Energy Storage Technologies Visualization App")
     
     st.markdown("""
-        Welcome to the LDES Energy Storage Technologies Visualization App! This innovative tool is 
+        Welcome to the LDES Energy Storage Technologies Visualization App! This tool is 
         designed to facilitate dynamic visualization of long-duration energy storage metrics and projects.  
 
         By leveraging data sourced from industry reports, academic literature, and expert insights, 
@@ -90,52 +90,36 @@ if st.session_state.page == "Documentation":
 
         - **Detailed Technology:** Specific energy storage technologies within a category.
 
-        - **Round Trip Efficiency AC-AC (%):** Ratio of energy discharged from the system (AC) from a 
-        starting state of charge to the energy received (AC) to bring the system to the same starting charge. 
-        Clearly provide system boundary encompassed for provided RTE.
+        - **Round Trip Efficiency AC-AC (%):** Ratio of energy discharged from the system (AC) from a starting state of charge
+         to the energy received (AC) to bring the system to the same starting charge.
 
-        - **Discharge Duration (hrs):** Sweet spot of discharge duration in hours. The duration at which 
-        the system discharges the rated power.
+        - **Discharge Duration (hrs):** The duration at which the system discharges the rated nameplate power. Optimal discharge durations provided. 
 
         - **Degradation Rate (% Energy Capacity Change/Cycle):** Rate at which the energy capacity of the ESS degrades. 
         Rate is dependent on ambient conditions, depth of discharge, charge rate, and discharge rate. 
         Provide nominal values and relevant conditions.
 
-        - **Cycle Life (# of cycles):** Number of cycles expected within the life of the energy storage system. 
-        Cycles until retirement is required.
+        - **Cycle Life (# of cycles):** Number of cycles expected within the life of the energy storage system (i.e. cycles until retirement).
 
-        - **Ramp Rate (% rated power/s):** The speed at which storage can increase or decrease input/output.
+        - **Ramp Rate (% rated power/s):** The speed at which storage can increase or decrease power input and output. Starting state provided in tabulated data. 
 
-        - **Expected Downtime**
-
-        - **Response Time from off state (s):** Time required for a system to output (or input) energy at full 
-        rated power from shutdown state.
+        - **Response Time (s):** Time required for a system to output (or input) energy at full rated power. Starting state provided in tabulated data. 
                     
-        - **Energy Density (acre/MWhe):** Amount of land required to deploy 1 unit energy (electrical equivalent) 
-        capacity of the ESS storage block. This metric should correspond to the storage block of the ESS.
+        - **Energy Density (acre/MWhe):** Amount of land required to deploy 1 unit of energy capacity (electrical equivalent) of the ESS Storage Block. 
                     
-        - **Power Density (acre/MWe):** Amount of land required to deploy 1 unit of power (electrical equivalent) 
-        capacity of the ESS power equipment. If the storage and power blocks are separate (e.g., thermal energy storage), 
-        this value only should correspond to the footprint of the power-related equipment. If the power and energy 
-        equipment are consolidated in one package (e.g., battery container), this value should still represent 
-        the power equipment footprint, which consequently is the combined footprint. Note if the value is for a 
-        combined or separate power and energy footprint.            
+        - **Power Density (acre/MWe):** Amount of land required to deploy 1 unit of power (electrical equivalent) of the ESS Power Equipment. 
+        If the storage and power blocks are separate (e.g., thermal energy storage), this value corresponds to the footprint of the power-related equipment only.             
         """,unsafe_allow_html=True)
 
     with right_col:
         st.markdown("""              
         - **Geological Feature Requirement (Yes or No):** Does the technology require a natural geological feature? 
-        Yes or No? If yes, describe the feature.
 
-        - **Historical Fire Events (≥5 = high, 1–5 = medium, 0 = low):** Number of fire events associated with LDES 
-        technologies as a result of the LDES system itself.
+        - **Historical Fire Events (≥5 = high, 1–5 = medium, 0 = low):**  Number of fire events associated with LDES technology because of the LDES system itself.
 
         - **Off-gassing (Yes or No):** Does the system produce gases as a byproduct of the system operations? 
-        If yes, describe the gases produced and quantity of gases yielded per kWh of energy discharged or charged (m³/kWh).
 
-        - **Environmental Impact (Qualitative Low, Medium, High):** Will the system be negatively intrusive in the 
-        natural environment in which it is situated (water consumption, soil erosion, form-factor, etc.). 
-        Describe impact.
+        - **Environmental Impact (Qualitative Low, Medium, High):** Will the system be negatively intrusive in the natural environment in which it is situated (water consumption, soil erosion, form-factor, etc.)?
 
         - **Technology Readiness Level (#):** Level of technology maturity and readiness for commercialization (1–9 scale).
 
@@ -634,7 +618,7 @@ elif st.session_state.page == "Project Tracking":
             project_tech_categories = {
                 "Electrochemical": ["Iron Flow", "Lead-Acid", "Lithium-ion", "Sodium-ion", "Vanadium Flow"],
                 "Mechanical": ["Compressed Air Storage", "Geopressured Geothermal System (GGS)", "Pumped Hydro Storage"],
-                "Thermal": ["Latent Heat TES", "Molten Salt TES", "Sensible Heat TES", "Sodium-sulfur TES"]
+                "Thermal": ["Latent Heat TES", "Molten Salt TES", "Sensible Heat TES", "Sodium-Sulfur TES"]
             }
             
             # Collect all selected detailed technologies based on active technology types
