@@ -48,10 +48,10 @@ if st.session_state.page == "Documentation":
         unsafe_allow_html=True
     )
 if st.session_state.page == "Documentation":
-    st.title("Energy Storage Technologies Visualization App")
+    st.title("Energy Storage Technologies Evaluation Tool")
     
     st.markdown("""
-        Welcome to the LDES Energy Storage Technologies Visualization App! This tool is 
+        Welcome to the LDES Energy Storage Technologies Evaluation Tool! This tool is 
         designed to facilitate dynamic visualization of long-duration energy storage metrics and projects.  
 
         By leveraging data sourced from industry reports, academic literature, and expert insights, 
@@ -446,18 +446,18 @@ elif st.session_state.page == "Visualization":
 
         def set_figure_size(fig):
             fig.update_layout(
+                height=800,
                 margin=dict(l=50, r=50, t=80, b=50),
                 font=dict(size=12),
-                autosize=True,
                 showlegend=False
             )
             return fig
         
         def set_figure_size_with_legend(fig):
             fig.update_layout(
+                height=800,
                 margin=dict(l=50, r=50, t=80, b=50),
                 font=dict(size=12),
-                autosize=True
             )
             return fig
 
@@ -587,11 +587,6 @@ elif st.session_state.page == "Visualization":
 # ==================== PROJECT TRACKING PAGE ====================
 elif st.session_state.page == "Project Tracking":
     st.title("LDES Project Tracking")
-    
-    st.markdown("""
-    This page displays the LDES Project Tracking Spreadsheet with information about 
-    various energy storage projects and their current status.
-    """)
     
     try:
         # Load the CSV file
