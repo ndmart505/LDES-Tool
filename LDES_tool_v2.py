@@ -6,7 +6,7 @@ import numpy as np
 import project_map
 
 # Set default view to wide
-st.set_page_config(layout="wide", page_title="LDES Energy Storage")
+st.set_page_config(layout="wide", page_title="Long Duration Energy Storage Evaluation & Tracking Tool")
 
 csv_url = "ldes_real_data_v1.csv"
 projects_url = "LDES project tracking list v4.csv"
@@ -48,10 +48,10 @@ if st.session_state.page == "Documentation":
         unsafe_allow_html=True
     )
 if st.session_state.page == "Documentation":
-    st.title("Energy Storage Technologies Evaluation Tool")
+    st.title("Long Duration Energy Storage Evaluation & Tracking Tool")
     
     st.markdown("""
-        Welcome to the LDES Energy Storage Technologies Evaluation Tool! This tool is 
+        Welcome to the Long Duration Energy Storage Evaluation & Tracking Tool! This tool is 
         designed to facilitate dynamic visualization of long-duration energy storage metrics and projects.  
 
         By leveraging data sourced from industry reports, academic literature, and expert insights, 
@@ -63,7 +63,7 @@ if st.session_state.page == "Documentation":
     # Navigation buttons
     col1, col2, col3 = st.columns(3)
     with col1:
-        if st.button("Visualization", use_container_width=True, type="primary"):
+        if st.button("Metric Visualization", use_container_width=True, type="primary"):
             st.session_state.page = "Visualization"
             st.rerun()
     with col2:
@@ -157,7 +157,7 @@ if st.session_state.page == "Documentation":
 
 # ==================== VISUALIZATION PAGE ====================
 elif st.session_state.page == "Visualization":
-    st.title("Energy Storage Technologies Visualization")
+    st.title("LDES Metric Visualization")
     
     try:
         df = pd.read_csv(csv_url)
