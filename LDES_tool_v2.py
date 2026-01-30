@@ -25,7 +25,7 @@ st.divider()
 
 # Sidebar navigation
 st.sidebar.header("Navigation")
-page_options = ["Documentation", "Visualization", "Project Tracking"]
+page_options = ["Documentation", "Metric Visualization", "Project Tracking"]
 st.session_state.page = st.sidebar.selectbox(
     "Select Page",
     options=page_options,
@@ -64,7 +64,7 @@ if st.session_state.page == "Documentation":
     col1, col2, col3 = st.columns(3)
     with col1:
         if st.button("Metric Visualization", use_container_width=True, type="primary"):
-            st.session_state.page = "Visualization"
+            st.session_state.page = "Metric Visualization"
             st.rerun()
     with col2:
         if st.button("Project Tracking", use_container_width=True, type="primary"):
@@ -138,13 +138,18 @@ if st.session_state.page == "Documentation":
 
     st.subheader("Notes:")    
 
+    st.markdown("""
+        - **Metric Visualization:**
+            - Data is provided by technology experts associated with Department of Energy National Laboratories.
+            - Technology experts sourced data from industry, literature, and expert judgement where applicable.
+            - Data is time-stamped to June 2025.
+            - **Disclaimer:** The quantitative metrics provided are not guaranteed to match the most up-to-date metrics 
+            offered by technology providers. The data provided herein is the best data available at the time of this release.
+    """)
 
     st.markdown("""
-        - Data is provided by technology experts associated with Department of Energy National Laboratories.
-        - Technology experts sourced data from industry, literature, and expert judgement where applicable.
-        - Data is time-stamped to June 2025.
-        - **Disclaimer:** The quantitative metrics provided are not guaranteed to match the most up-to-date metrics 
-        offered by technology providers. The data provided herein is the best data available at the time of this release.
+        - **Project Tracking:**
+            - Data is provided from the [DOE Global Energy Storage Database](https://gesdb.sandia.gov/).
     """)
 
     st.subheader("Methodology:")
@@ -156,14 +161,14 @@ if st.session_state.page == "Documentation":
     """)
 
 # ==================== VISUALIZATION PAGE ====================
-elif st.session_state.page == "Visualization":
+elif st.session_state.page == "Metric Visualization":
     st.title("LDES Metric Visualization")
     
     try:
         df = pd.read_csv(csv_url)
         
         # Sidebar filters
-        st.sidebar.header("Visualization Filters")
+        st.sidebar.header("Metric Visualization Filters")
         
         # Define the mapping of combined metrics to their low/high column names
         range_metrics = {
@@ -577,6 +582,13 @@ elif st.session_state.page == "Visualization":
             height=400,
             disabled=True,
             hide_index=True
+        )
+
+        st.download_button(
+            label="Download Filtered Data as CSV",
+            data=filtered_df.to_csv(index=False).encode('utf-8'),
+            file_name='ldes_filtered_metrics.csv',
+            mime='text/csv',
         )
 
     except Exception as e:
