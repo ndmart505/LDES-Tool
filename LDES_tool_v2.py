@@ -4,6 +4,7 @@ import plotly.graph_objects as go
 import plotly.express as px
 import numpy as np
 import project_map
+import base64
 
 # Set default view to wide
 st.set_page_config(layout="wide", page_title="Long Duration Energy Storage Evaluation & Tracking Tool")
@@ -11,15 +12,48 @@ st.set_page_config(layout="wide", page_title="Long Duration Energy Storage Evalu
 csv_url = "ldes_real_data_v1.csv"
 projects_url = "LDES project tracking list v4.csv"
 
-# Header with logo (appears on all pages)
-st.markdown(
-    """
-    <div style="text-align: center;">
-        <img src="https://www.sandia.gov/app/uploads/sites/256/2025/07/LDES-Logo-blackBG.png" width="653" height="115">
-    </div>
-    """, 
-    unsafe_allow_html=True
-)
+# ==================== CACHED FUNCTIONS ====================
+@st.cache_data(ttl=3600)  # Cache for 1 hour
+def load_metrics_data():
+    """Load and cache metrics data"""
+    return pd.read_csv(csv_url)
+
+@st.cache_data(ttl=3600)
+def load_projects_data():
+    """Load and cache projects data"""
+    return pd.read_csv(projects_url)
+
+@st.cache_data
+def get_logo_base64():
+    """Load and cache logo as base64"""
+    try:
+        with open("LDES-Logo-blackBG.png", "rb") as f:
+            return base64.b64encode(f.read()).decode()
+    except:
+        # Fallback to external URL if local file not found
+        return None
+
+# ==================== HEADER (APPEARS ON ALL PAGES) ====================
+logo_base64 = get_logo_base64()
+if logo_base64:
+    st.markdown(
+        f"""
+        <div style="text-align: center;">
+            <img src="data:image/png;base64,{logo_base64}" width="653" height="115">
+        </div>
+        """, 
+        unsafe_allow_html=True
+    )
+else:
+    # Fallback to external URL
+    st.markdown(
+        """
+        <div style="text-align: center;">
+            <img src="https://www.sandia.gov/app/uploads/sites/256/2025/07/LDES-Logo-blackBG.png" width="653" height="115">
+        </div>
+        """, 
+        unsafe_allow_html=True
+    )
 
 st.divider()
 
@@ -165,7 +199,8 @@ elif st.session_state.page == "Metric Visualization":
     st.title("LDES Metric Visualization")
     
     try:
-        df = pd.read_csv(csv_url)
+        # Use cached data loading
+        df = load_metrics_data()
         
         # Sidebar filters
         st.sidebar.header("Metric Visualization Filters")
@@ -601,8 +636,8 @@ elif st.session_state.page == "Project Tracking":
     st.title("LDES Project Tracking")
     
     try:
-        # Load the CSV file
-        projects_df = pd.read_csv(projects_url)
+        # Use cached data loading
+        projects_df = load_projects_data()
         
         # Sidebar filters for Project Tracking
         st.sidebar.header("Project Tracking Filters")
@@ -667,7 +702,8 @@ elif st.session_state.page == "Project Tracking":
             st.metric("Filtered Projects", len(filtered_projects_df))
 
         # Render the project map
-        project_map.render_project_map(filtered_projects_df)    
+        with st.spinner("Loading map..."):
+            project_map.render_project_map(filtered_projects_df)    
         
         # Display the full dataframe
         st.subheader("All Projects")
