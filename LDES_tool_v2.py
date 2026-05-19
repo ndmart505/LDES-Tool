@@ -39,7 +39,7 @@ if logo_base64:
     st.markdown(
         f"""
         <div style="text-align: center;">
-            <img src="data:image/png;base64,{logo_base64}" width="653" height="115">
+            <img src="data:image/png;base64,{logo_base64}" width="653" height="115" alt="LDES Tool Logo - Long Duration Energy Storage Evaluation and Tracking Tool">
         </div>
         """, 
         unsafe_allow_html=True
@@ -49,7 +49,7 @@ else:
     st.markdown(
         """
         <div style="text-align: center;">
-            <img src="https://www.sandia.gov/app/uploads/sites/256/2025/07/LDES-Logo-blackBG.png" width="653" height="115">
+            <img src="https://www.sandia.gov/app/uploads/sites/256/2025/07/LDES-Logo-blackBG.png" width="653" height="115" alt="LDES Tool Logo - Long Duration Energy Storage Evaluation and Tracking Tool">
         </div>
         """, 
         unsafe_allow_html=True
@@ -67,6 +67,8 @@ st.session_state.page = st.sidebar.selectbox(
 )
 
 st.sidebar.divider()
+st.sidebar.markdown("**Contact**")
+st.sidebar.markdown("Nathaniel Martinez  \nndmart@sandia.gov")
 
 # ==================== DOCUMENTATION PAGE ====================
 if st.session_state.page == "Documentation":
@@ -194,13 +196,15 @@ if st.session_state.page == "Documentation":
         - Visualizations are generated dynamically based on filtered data.
     """)
 
+
 # ==================== VISUALIZATION PAGE ====================
 elif st.session_state.page == "Metric Visualization":
     st.title("LDES Metric Visualization")
     
     try:
         # Use cached data loading
-        df = load_metrics_data()
+        with st.spinner("Loading data..."):
+            df = load_metrics_data()
         
         # Sidebar filters
         st.sidebar.header("Metric Visualization Filters")
@@ -627,9 +631,10 @@ elif st.session_state.page == "Metric Visualization":
         )
 
     except Exception as e:
-        st.error(f"Error loading the CSV file: {e}")
-        import traceback
-        st.code(traceback.format_exc())
+        st.error(
+            "The metric data could not be loaded. Please try refreshing the page. "
+            "If the problem persists, contact Nathaniel Martinez at ndmart@sandia.gov."
+        )
 
 # ==================== PROJECT TRACKING PAGE ====================
 elif st.session_state.page == "Project Tracking":
@@ -729,6 +734,19 @@ elif st.session_state.page == "Project Tracking":
         )
 
     except Exception as e:
-        st.error(f"Error loading the project tracking file: {e}")
-        import traceback
-        st.code(traceback.format_exc())
+        st.error(
+            "The project tracking data could not be loaded. Please try refreshing the page. "
+            "If the problem persists, contact Nathaniel Martinez at ndmart@sandia.gov."
+        )
+
+# ==================== PERSISTENT FOOTER (APPEARS ON ALL PAGES) ====================
+st.divider()
+st.markdown(
+    """
+    <p style="font-size: 0.85em; color: gray; text-align: center;">
+    For questions or support, contact 
+    <a href="mailto:ndmart@sandia.gov">Nathaniel Martinez (ndmart@sandia.gov)</a>.
+    </p>
+    """,
+    unsafe_allow_html=True
+)
