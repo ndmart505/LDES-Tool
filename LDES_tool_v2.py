@@ -99,11 +99,11 @@ if st.session_state.page == "Documentation":
     # Navigation buttons
     col1, col2, col3 = st.columns(3)
     with col1:
-        if st.button("Metric Visualization", use_container_width=True, type="primary"):
+        if st.button("Metric Visualization", width="stretch", type="primary"):
             st.session_state.page = "Metric Visualization"
             st.rerun()
     with col2:
-        if st.button("Project Tracking", use_container_width=True, type="primary"):
+        if st.button("Project Tracking", width="stretch", type="primary"):
             st.session_state.page = "Project Tracking"
             st.rerun()
     with col3:
@@ -505,28 +505,6 @@ elif st.session_state.page == "Metric Visualization":
             )
             return fig
 
-        # Dictionary to hold all figures
-        figures = {
-            "Duration Range (hr)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Duration - Low (hr)", "Duration - High (hr)", "Duration Range (hr)")),
-            "Round-Trip Efficiency (RTE) Range (%)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "RTE - Low (%)", "RTE - High (%)", "Round-Trip Efficiency (RTE) Range (%)")),
-            "Degradation Rate Range (%/cycle)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Degradation - Low (%/cycle)", "Degradation - High (%/cycle)", "Degradation Rate Range (%/cycle)")),
-            "Cycle Life Range (#)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Cycle Life - Low (#)", "Cycle Life - High (#)", "Cycle Life Range (#)")),
-            "Ramp Rate Range (% rated power/sec)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Ramp Rate - Low (% rated power/sec)", "Ramp Rate - High (% rated power/sec)", "Ramp Rate Range (% rated power/sec)")),
-            "Response Time Range (s)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Response Time - Low (s)", "Response Time - High (s)", "Response Time Range (s)")),
-            "Energy Density Range (acre/MWhe)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Energy Density - Low (acre/MWhe)", "Energy Density - High (acre/MWhe)", "Energy Density Range (acre/MWhe)")),
-            "Power Density Range (acre/MW)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Power Density - Low (acre/MW)", "Power Density - High (acre/MW)", "Power Density Range (acre/MW)")),
-            "CAPEX Energy Basis Range ($/kWhe)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "CAPEX Energy Basis - Low ($/kWhe)", "CAPEX Energy Basis - High ($/kWhe)", "CAPEX Energy Basis Range ($/kWhe)")),
-            "CAPEX Power Basis Range ($/kWe)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "CAPEX Power Basis - Low ($/kWe)", "CAPEX Power Basis - High ($/kWe)", "CAPEX Power Basis Range ($/kWe)")),
-            "OPEX Range ($/kW-year)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "OPEX - Low ($/kW-year)", "OPEX - High ($/kW-year)", "OPEX Range ($/kW-year)")),
-            "Technology Readiness Level (TRL)": set_figure_size(px.bar(filtered_df, x="Detailed Technology", y="TRL", title="Technology Readiness Level (TRL)", color="Detailed Technology")),
-            "Application Readiness Level (ARL)": set_figure_size(px.bar(filtered_df, x="Detailed Technology", y="ARL", title="Application Readiness Level (ARL)", color="Detailed Technology")),
-            "Manufacturing Readiness Level (MRL)": set_figure_size(px.bar(filtered_df, x="Detailed Technology", y="MRL", title="Manufacturing Readiness Level (MRL)", color="Detailed Technology")),
-            "Geological Feature Requirement": set_figure_size_with_legend(px.bar(filtered_df, x="Detailed Technology", color="Geological Req.", title="Geological Feature Requirement")),
-            "Historical Fire Events": set_figure_size_with_legend(px.bar(filtered_df, x="Detailed Technology", color="Fire Incidents", title="Historical Fire Events")),
-            "Environmental Impact": set_figure_size_with_legend(px.bar(filtered_df, x="Detailed Technology", color="Environmental Impact", title="Environmental Impact")),
-            "Separate Power & Energy": set_figure_size_with_legend(px.bar(filtered_df, x="Detailed Technology", color="Separate Power & Energy ", title="Separate Power & Energy")),
-        }
-        
         # Create custom Off-Gassing chart with Yes/No colors and hover details
         def create_offgassing_chart(df):
             if len(df) == 0:
@@ -590,10 +568,51 @@ elif st.session_state.page == "Metric Visualization":
             )
             return fig
         
-        figures["Off-Gassing"] = create_offgassing_chart(filtered_df)
+        # Lazy figure builders: each entry is a zero-argument function that
+        # constructs ONE figure. Only the builder for the selected chart is
+        # ever called, so a rerun rebuilds 1 figure instead of all 19.
+        figure_builders = {
+            "Duration Range (hr)": lambda: set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Duration - Low (hr)", "Duration - High (hr)", "Duration Range (hr)")),
+            "Round-Trip Efficiency (RTE) Range (%)": lambda: set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "RTE - Low (%)", "RTE - High (%)", "Round-Trip Efficiency (RTE) Range (%)")),
+            "Degradation Rate Range (%/cycle)": lambda: set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Degradation - Low (%/cycle)", "Degradation - High (%/cycle)", "Degradation Rate Range (%/cycle)")),
+            "Cycle Life Range (#)": lambda: set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Cycle Life - Low (#)", "Cycle Life - High (#)", "Cycle Life Range (#)")),
+            "Ramp Rate Range (% rated power/sec)": lambda: set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Ramp Rate - Low (% rated power/sec)", "Ramp Rate - High (% rated power/sec)", "Ramp Rate Range (% rated power/sec)")),
+            "Response Time Range (s)": lambda: set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Response Time - Low (s)", "Response Time - High (s)", "Response Time Range (s)")),
+            "Energy Density Range (acre/MWhe)": lambda: set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Energy Density - Low (acre/MWhe)", "Energy Density - High (acre/MWhe)", "Energy Density Range (acre/MWhe)")),
+            "Power Density Range (acre/MW)": lambda: set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Power Density - Low (acre/MW)", "Power Density - High (acre/MW)", "Power Density Range (acre/MW)")),
+            "CAPEX Energy Basis Range ($/kWhe)": lambda: set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "CAPEX Energy Basis - Low ($/kWhe)", "CAPEX Energy Basis - High ($/kWhe)", "CAPEX Energy Basis Range ($/kWhe)")),
+            "CAPEX Power Basis Range ($/kWe)": lambda: set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "CAPEX Power Basis - Low ($/kWe)", "CAPEX Power Basis - High ($/kWe)", "CAPEX Power Basis Range ($/kWe)")),
+            "OPEX Range ($/kW-year)": lambda: set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "OPEX - Low ($/kW-year)", "OPEX - High ($/kW-year)", "OPEX Range ($/kW-year)")),
+            "Technology Readiness Level (TRL)": lambda: set_figure_size(px.bar(filtered_df, x="Detailed Technology", y="TRL", title="Technology Readiness Level (TRL)", color="Detailed Technology")),
+            "Application Readiness Level (ARL)": lambda: set_figure_size(px.bar(filtered_df, x="Detailed Technology", y="ARL", title="Application Readiness Level (ARL)", color="Detailed Technology")),
+            "Manufacturing Readiness Level (MRL)": lambda: set_figure_size(px.bar(filtered_df, x="Detailed Technology", y="MRL", title="Manufacturing Readiness Level (MRL)", color="Detailed Technology")),
+            "Geological Feature Requirement": lambda: set_figure_size_with_legend(px.bar(filtered_df, x="Detailed Technology", color="Geological Req.", title="Geological Feature Requirement")),
+            "Historical Fire Events": lambda: set_figure_size_with_legend(px.bar(filtered_df, x="Detailed Technology", color="Fire Incidents", title="Historical Fire Events")),
+            "Environmental Impact": lambda: set_figure_size_with_legend(px.bar(filtered_df, x="Detailed Technology", color="Environmental Impact", title="Environmental Impact")),
+            "Separate Power & Energy": lambda: set_figure_size_with_legend(px.bar(filtered_df, x="Detailed Technology", color="Separate Power & Energy ", title="Separate Power & Energy")),
+            "Off-Gassing": lambda: create_offgassing_chart(filtered_df),
+        }
 
-        selected_chart = st.selectbox("Select Graph to View:", list(figures.keys()))
-        st.plotly_chart(figures[selected_chart], use_container_width=True, config={'displayModeBar': True, 'responsive': True})
+        # Cache wrapper: returns the figure for one chart. Streamlit reuses the
+        # cached figure when the chart name, the filtered data, and the active
+        # slider ranges are all unchanged, so re-selecting a chart is instant.
+        # The df / ranges arguments exist purely to form the cache key; the
+        # builder lambdas read the current filtered_df and active_filter_ranges.
+        @st.cache_data(show_spinner=False)
+        def build_selected_figure(chart_name, _filtered_df_key, _active_ranges_key):
+            return figure_builders[chart_name]()
+
+        # Move chart selection BEFORE figure construction so only the
+        # selected figure is built on each rerun.
+        selected_chart = st.selectbox("Select Graph to View:", list(figure_builders.keys()))
+
+        # Hashable snapshot of active slider ranges for cache invalidation.
+        active_ranges_key = tuple(sorted(
+            (k, float(v[0]), float(v[1])) for k, v in active_filter_ranges.items()
+        ))
+
+        selected_figure = build_selected_figure(selected_chart, filtered_df, active_ranges_key)
+        st.plotly_chart(selected_figure, width="stretch", config={'displayModeBar': True, 'responsive': True})
 
         # Display the filtered data
         st.header("Filtered Data")
@@ -617,7 +636,7 @@ elif st.session_state.page == "Metric Visualization":
         st.data_editor(
             filtered_df,
             column_config=column_config,
-            use_container_width=True,
+            width="stretch",
             height=400,
             disabled=True,
             hide_index=True
@@ -719,7 +738,7 @@ elif st.session_state.page == "Project Tracking":
         st.data_editor(
             filtered_projects_df,
             column_config=project_column_config,
-            use_container_width=True,
+            width="stretch",
             height=600,
             disabled=True,
             hide_index=True
