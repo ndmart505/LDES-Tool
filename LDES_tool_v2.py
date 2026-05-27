@@ -66,10 +66,6 @@ st.session_state.page = st.sidebar.selectbox(
     index=page_options.index(st.session_state.get('page', 'Documentation'))
 )
 
-st.sidebar.divider()
-st.sidebar.markdown("**Contact**")
-st.sidebar.markdown("Nathaniel Martinez  \nndmart@sandia.gov")
-
 # ==================== DOCUMENTATION PAGE ====================
 if st.session_state.page == "Documentation":
     # Hide sidebar for Documentation page
