@@ -184,7 +184,7 @@ if st.session_state.page == "Documentation":
         st.markdown(
             f"""
             <div style="text-align: center; padding: 16px 0;">
-                <img src="data:image/png;base64,{logo_base64}" width="653" height="115" alt="LDES Tool Logo - Long Duration Energy Storage Evaluation and Tracking Tool">
+                <img src="data:image/png;base64,{logo_base64}" width="980" height="173" alt="LDES Tool Logo - Long Duration Energy Storage Evaluation and Tracking Tool">
             </div>
             """,
             unsafe_allow_html=True
@@ -193,7 +193,7 @@ if st.session_state.page == "Documentation":
         st.markdown(
             """
             <div style="text-align: center; padding: 16px 0;">
-                <img src="https://www.sandia.gov/app/uploads/sites/256/2025/07/LDES-Logo-blackBG.png" width="653" height="115" alt="LDES Tool Logo - Long Duration Energy Storage Evaluation and Tracking Tool">
+                <img src="https://www.sandia.gov/app/uploads/sites/256/2025/07/LDES-Logo-blackBG.png" width="980" height="173" alt="LDES Tool Logo - Long Duration Energy Storage Evaluation and Tracking Tool">
             </div>
             """,
             unsafe_allow_html=True
