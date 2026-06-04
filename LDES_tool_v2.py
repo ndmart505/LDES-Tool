@@ -833,3 +833,15 @@ elif st.session_state.page == "Project Tracking":
         st.error(f"Error loading the project tracking file: {e}")
         import traceback
         st.code(traceback.format_exc())
+
+# ==================== PERSISTENT FOOTER (APPEARS ON ALL PAGES) ====================
+st.divider()
+st.markdown(
+    """
+    <p style="font-size: 0.85em; color: gray; text-align: center;">
+    For questions or support, contact 
+    <a href="mailto:ndmart@sandia.gov">ndmart@sandia.gov</a>.
+    </p>
+    """,
+    unsafe_allow_html=True
+)
