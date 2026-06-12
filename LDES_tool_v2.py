@@ -7,7 +7,7 @@ import project_map
 import base64
 
 # Set default view to wide
-st.set_page_config(layout="wide", page_title="Long Duration Energy Storage Evaluation & Tracking Tool")
+st.set_page_config(layout="wide", page_title="Long Duration Energy Storage Evaluation & Tracking Tool", page_icon="cropped-SNL_thunderbird.png")
 
 csv_url = "ldes_real_data_v1.csv"
 projects_url = "LDES project tracking list v4.csv"
@@ -31,6 +31,15 @@ def get_logo_base64():
             return base64.b64encode(f.read()).decode()
     except:
         # Fallback to external URL if local file not found
+        return None
+
+@st.cache_data
+def get_snl_logo_base64():
+    """Load and cache SNL logo as base64"""
+    try:
+        with open("SNL_Stacked_White-1.png", "rb") as f:
+            return base64.b64encode(f.read()).decode()
+    except:
         return None
 
 # ==================== GLOBAL STYLES + FIXED HEADER ====================
@@ -57,6 +66,11 @@ def nav_link(label, active):
     return f'<a href="?p={key}" class="{cls}" target="_self">{label}</a>'
 
 nav_html = "".join(nav_link(p, p == current_page) for p in nav_pages)
+snl_logo_b64 = get_snl_logo_base64()
+snl_logo_html = (
+    f'<img src="data:image/png;base64,{snl_logo_b64}" class="ldes-header-snl-logo" alt="Sandia National Laboratories">'
+    if snl_logo_b64 else ''
+)
 
 st.markdown(f"""
 <style>
@@ -77,6 +91,11 @@ st.markdown(f"""
 .ldes-header-title-bar {{
     background-color: #002f43;
     padding: 11px 32px 10px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    overflow: hidden;
 }}
 .ldes-header-title {{
     color: #ffffff !important;
@@ -88,10 +107,21 @@ st.markdown(f"""
     text-decoration: none !important;
     cursor: pointer;
     display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1 1 auto;
+    min-width: 0;
 }}
 .ldes-header-title:hover {{
     color: #ffffff !important;
     text-decoration: none !important;
+}}
+.ldes-header-snl-logo {{
+    height: 48px;
+    width: auto;
+    flex-shrink: 0;
+    margin-left: 24px;
 }}
 
 /* Nav strip — lighter blue */
@@ -171,6 +201,7 @@ header[data-testid="stHeader"] {{
 <div class="ldes-header">
     <div class="ldes-header-title-bar">
         <a href="?p=doc" class="ldes-header-title" target="_self">Long Duration Energy Storage Evaluation &amp; Tracking Tool</a>
+        {snl_logo_html}
     </div>
     <div class="ldes-header-nav">{nav_html}</div>
 </div>
@@ -301,7 +332,8 @@ elif st.session_state.page == "Metric Visualization":
     
     try:
         # Use cached data loading
-        df = load_metrics_data()
+        with st.spinner("Loading data..."):
+            df = load_metrics_data()
         
         # Sidebar filters
         st.sidebar.header("Metric Visualization Filters")
@@ -602,26 +634,29 @@ elif st.session_state.page == "Metric Visualization":
             )
             return fig
 
-        # Dictionary to hold all figures
-        figures = {
-            "Duration Range (hr)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Duration - Low (hr)", "Duration - High (hr)", "Duration Range (hr)")),
-            "Round-Trip Efficiency (RTE) Range (%)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "RTE - Low (%)", "RTE - High (%)", "Round-Trip Efficiency (RTE) Range (%)")),
-            "Degradation Rate Range (%/cycle)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Degradation - Low (%/cycle)", "Degradation - High (%/cycle)", "Degradation Rate Range (%/cycle)")),
-            "Cycle Life Range (#)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Cycle Life - Low (#)", "Cycle Life - High (#)", "Cycle Life Range (#)")),
-            "Ramp Rate Range (% rated power/sec)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Ramp Rate - Low (% rated power/sec)", "Ramp Rate - High (% rated power/sec)", "Ramp Rate Range (% rated power/sec)")),
-            "Response Time Range (s)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Response Time - Low (s)", "Response Time - High (s)", "Response Time Range (s)")),
-            "Energy Density Range (acre/MWhe)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Energy Density - Low (acre/MWhe)", "Energy Density - High (acre/MWhe)", "Energy Density Range (acre/MWhe)")),
-            "Power Density Range (acre/MW)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Power Density - Low (acre/MW)", "Power Density - High (acre/MW)", "Power Density Range (acre/MW)")),
-            "CAPEX Energy Basis Range ($/kWhe)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "CAPEX Energy Basis - Low ($/kWhe)", "CAPEX Energy Basis - High ($/kWhe)", "CAPEX Energy Basis Range ($/kWhe)")),
-            "CAPEX Power Basis Range ($/kWe)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "CAPEX Power Basis - Low ($/kWe)", "CAPEX Power Basis - High ($/kWe)", "CAPEX Power Basis Range ($/kWe)")),
-            "OPEX Range ($/kW-year)": set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "OPEX - Low ($/kW-year)", "OPEX - High ($/kW-year)", "OPEX Range ($/kW-year)")),
-            "Technology Readiness Level (TRL)": set_figure_size(px.bar(filtered_df, x="Detailed Technology", y="TRL", title="Technology Readiness Level (TRL)", color="Detailed Technology")),
-            "Application Readiness Level (ARL)": set_figure_size(px.bar(filtered_df, x="Detailed Technology", y="ARL", title="Application Readiness Level (ARL)", color="Detailed Technology")),
-            "Manufacturing Readiness Level (MRL)": set_figure_size(px.bar(filtered_df, x="Detailed Technology", y="MRL", title="Manufacturing Readiness Level (MRL)", color="Detailed Technology")),
-            "Geological Feature Requirement": set_figure_size_with_legend(px.bar(filtered_df, x="Detailed Technology", color="Geological Req.", title="Geological Feature Requirement")),
-            "Historical Fire Events": set_figure_size_with_legend(px.bar(filtered_df, x="Detailed Technology", color="Fire Incidents", title="Historical Fire Events")),
-            "Environmental Impact": set_figure_size_with_legend(px.bar(filtered_df, x="Detailed Technology", color="Environmental Impact", title="Environmental Impact")),
-            "Separate Power & Energy": set_figure_size_with_legend(px.bar(filtered_df, x="Detailed Technology", color="Separate Power & Energy ", title="Separate Power & Energy")),
+        # Lazy figure builders: each entry is a zero-argument function that
+        # constructs ONE figure. Only the builder for the selected chart is
+        # ever called, so a rerun rebuilds 1 figure instead of all 19.
+        figure_builders = {
+            "Duration Range (hr)": lambda: set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Duration - Low (hr)", "Duration - High (hr)", "Duration Range (hr)")),
+            "Round-Trip Efficiency (RTE) Range (%)": lambda: set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "RTE - Low (%)", "RTE - High (%)", "Round-Trip Efficiency (RTE) Range (%)")),
+            "Degradation Rate Range (%/cycle)": lambda: set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Degradation - Low (%/cycle)", "Degradation - High (%/cycle)", "Degradation Rate Range (%/cycle)")),
+            "Cycle Life Range (#)": lambda: set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Cycle Life - Low (#)", "Cycle Life - High (#)", "Cycle Life Range (#)")),
+            "Ramp Rate Range (% rated power/sec)": lambda: set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Ramp Rate - Low (% rated power/sec)", "Ramp Rate - High (% rated power/sec)", "Ramp Rate Range (% rated power/sec)")),
+            "Response Time Range (s)": lambda: set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Response Time - Low (s)", "Response Time - High (s)", "Response Time Range (s)")),
+            "Energy Density Range (acre/MWhe)": lambda: set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Energy Density - Low (acre/MWhe)", "Energy Density - High (acre/MWhe)", "Energy Density Range (acre/MWhe)")),
+            "Power Density Range (acre/MW)": lambda: set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "Power Density - Low (acre/MW)", "Power Density - High (acre/MW)", "Power Density Range (acre/MW)")),
+            "CAPEX Energy Basis Range ($/kWhe)": lambda: set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "CAPEX Energy Basis - Low ($/kWhe)", "CAPEX Energy Basis - High ($/kWhe)", "CAPEX Energy Basis Range ($/kWhe)")),
+            "CAPEX Power Basis Range ($/kWe)": lambda: set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "CAPEX Power Basis - Low ($/kWe)", "CAPEX Power Basis - High ($/kWe)", "CAPEX Power Basis Range ($/kWe)")),
+            "OPEX Range ($/kW-year)": lambda: set_figure_size(create_range_bar(filtered_df, "Detailed Technology", "OPEX - Low ($/kW-year)", "OPEX - High ($/kW-year)", "OPEX Range ($/kW-year)")),
+            "Technology Readiness Level (TRL)": lambda: set_figure_size(px.bar(filtered_df, x="Detailed Technology", y="TRL", title="Technology Readiness Level (TRL)", color="Detailed Technology")),
+            "Application Readiness Level (ARL)": lambda: set_figure_size(px.bar(filtered_df, x="Detailed Technology", y="ARL", title="Application Readiness Level (ARL)", color="Detailed Technology")),
+            "Manufacturing Readiness Level (MRL)": lambda: set_figure_size(px.bar(filtered_df, x="Detailed Technology", y="MRL", title="Manufacturing Readiness Level (MRL)", color="Detailed Technology")),
+            "Geological Feature Requirement": lambda: set_figure_size_with_legend(px.bar(filtered_df, x="Detailed Technology", color="Geological Req.", title="Geological Feature Requirement")),
+            "Historical Fire Events": lambda: set_figure_size_with_legend(px.bar(filtered_df, x="Detailed Technology", color="Fire Incidents", title="Historical Fire Events")),
+            "Environmental Impact": lambda: set_figure_size_with_legend(px.bar(filtered_df, x="Detailed Technology", color="Environmental Impact", title="Environmental Impact")),
+            "Separate Power & Energy": lambda: set_figure_size_with_legend(px.bar(filtered_df, x="Detailed Technology", color="Separate Power & Energy ", title="Separate Power & Energy")),
+            "Off-Gassing": lambda: create_offgassing_chart(filtered_df),
         }
         
         # Create custom Off-Gassing chart with Yes/No colors and hover details
@@ -687,10 +722,26 @@ elif st.session_state.page == "Metric Visualization":
             )
             return fig
         
-        figures["Off-Gassing"] = create_offgassing_chart(filtered_df)
+        # Cache wrapper: returns the figure for one chart. Streamlit reuses the
+        # cached figure when the chart name, the filtered data, and the active
+        # slider ranges are all unchanged, so re-selecting a chart is instant.
+        # The df / ranges arguments exist purely to form the cache key; the
+        # builder lambdas read the current filtered_df and active_filter_ranges.
+        @st.cache_data(show_spinner=False)
+        def build_selected_figure(chart_name, _filtered_df_key, _active_ranges_key):
+            return figure_builders[chart_name]()
 
-        selected_chart = st.selectbox("Select Graph to View:", list(figures.keys()))
-        st.plotly_chart(figures[selected_chart], use_container_width=True, config={'displayModeBar': True, 'responsive': True})
+        # Move chart selection BEFORE figure construction so only the
+        # selected figure is built on each rerun.
+        selected_chart = st.selectbox("Select Graph to View:", list(figure_builders.keys()))
+
+        # Hashable snapshot of active slider ranges for cache invalidation.
+        active_ranges_key = tuple(sorted(
+            (k, float(v[0]), float(v[1])) for k, v in active_filter_ranges.items()
+        ))
+
+        selected_figure = build_selected_figure(selected_chart, filtered_df, active_ranges_key)
+        st.plotly_chart(selected_figure, width="stretch", config={'displayModeBar': True, 'responsive': True})
 
         # Display the filtered data
         st.header("Filtered Data")
@@ -714,7 +765,7 @@ elif st.session_state.page == "Metric Visualization":
         st.data_editor(
             filtered_df,
             column_config=column_config,
-            use_container_width=True,
+            width="stretch",
             height=400,
             disabled=True,
             hide_index=True
@@ -728,9 +779,10 @@ elif st.session_state.page == "Metric Visualization":
         )
 
     except Exception as e:
-        st.error(f"Error loading the CSV file: {e}")
-        import traceback
-        st.code(traceback.format_exc())
+        st.error(
+            "The metric data could not be loaded. Please try refreshing the page. "
+            "If the problem persists, contact ndmart@sandia.gov."
+        )
 
 # ==================== PROJECT TRACKING PAGE ====================
 elif st.session_state.page == "Project Tracking":
@@ -815,7 +867,7 @@ elif st.session_state.page == "Project Tracking":
         st.data_editor(
             filtered_projects_df,
             column_config=project_column_config,
-            use_container_width=True,
+            width="stretch",
             height=600,
             disabled=True,
             hide_index=True
@@ -830,9 +882,10 @@ elif st.session_state.page == "Project Tracking":
         )
 
     except Exception as e:
-        st.error(f"Error loading the project tracking file: {e}")
-        import traceback
-        st.code(traceback.format_exc())
+        st.error(
+            "The project tracking data could not be loaded. Please try refreshing the page. "
+            "If the problem persists, contact ndmart@sandia.gov."
+        )
 
 # ==================== PERSISTENT FOOTER (APPEARS ON ALL PAGES) ====================
 st.divider()
